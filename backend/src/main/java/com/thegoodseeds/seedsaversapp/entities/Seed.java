@@ -1,8 +1,17 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "Seed")
 public class Seed {
 	
+	@Id
+	@GeneratedValue(strategy =GenerationType.IDENTITY) 
 	   private Long seedId;
 	   private String popularName;
 	   private String scientificName;

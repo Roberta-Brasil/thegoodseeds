@@ -2,8 +2,18 @@ package com.thegoodseeds.seedsaversapp.entities;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "WishList")
 public class WishList {
-	
+	   
+	   @Id
+	   @GeneratedValue(strategy =GenerationType.IDENTITY) 
 	   private Long wishListId;
 	   private String wishListName;
 	   private Long seedId;

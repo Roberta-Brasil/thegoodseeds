@@ -2,8 +2,18 @@ package com.thegoodseeds.seedsaversapp.entities;
 
 import java.security.Timestamp;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Post")
 public class Post {
-	
+	   
+	   @Id
+	   @GeneratedValue(strategy =GenerationType.IDENTITY) 
 	   private Long postId;
 	   private Timestamp timePost;
 	   private int likesQuantity;

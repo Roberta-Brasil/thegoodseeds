@@ -2,8 +2,15 @@ package com.thegoodseeds.seedsaversapp.entities;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Connect")
 public class Connect {
-	
+	   
+	   @Id
 	   private Long userId;
 	   private Long followedId;
 	   private Date followAt;
