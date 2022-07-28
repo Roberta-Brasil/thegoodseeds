@@ -1,5 +1,6 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
+
 public class Seed {
 	
 	   private Long seedId;
