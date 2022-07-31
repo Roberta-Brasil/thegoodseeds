@@ -13,7 +13,7 @@ import com.thegoodseeds.seedsaversapp.repositories.CommentsRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 
 @Configuration
-@Profile("dev")
+@Profile("test")
 public class TestConfig implements CommandLineRunner {
 
 	@Autowired
@@ -45,8 +45,9 @@ public class TestConfig implements CommandLineRunner {
 		
 		System.out.println(rc);
 //		System.out.println(rc1);
-//		
-//		post1.setComments(Arrays.asList(rc, rc1));
+		
+		newPost.setComments(Arrays.asList(rc, rc1));
+		postRepo.save(newPost);
 //		
 //
 //      
