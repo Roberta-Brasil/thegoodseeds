@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -26,16 +28,20 @@ public class Post {
 	private String title;
 	private String postMessage;
 	private Long seedId;
-	private Long userId;
+	
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Comments> comments = new ArrayList<>();
+
+	@ManyToOne
+	@JoinColumn(name = "userId")
+	private User user;
 
 	public Post() {
 
 	}
 
-	public Post(int likesQuantity,String title, String postMessage) {
+	public Post(int likesQuantity, String title, String postMessage) {
 		this.likesQuantity = likesQuantity;
 		this.title = title;
 		this.postMessage = postMessage;
@@ -74,16 +80,17 @@ public class Post {
 		this.seedId = seedId;
 	}
 
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
 
 	public List<Comments> getComments() {
 		return comments;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public void setComments(List<Comments> comments) {
@@ -110,9 +117,9 @@ public class Post {
 	@Override
 	public String toString() {
 		return "Post [postId=" + postId + ", createdAt=" + createdAt + ", likesQuantity=" + likesQuantity + ", title="
-				+ title + ", postMessage=" + postMessage + ", seedId=" + seedId + ", userId=" + userId + ", comments="
-				+ comments + "]";
+				+ title + ", postMessage=" + postMessage + ", seedId=" + seedId + ", comments=" + comments + ", user="
+				+ user + "]";
 	}
 
-	
+
 }

@@ -1,19 +1,24 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "User")
 public class User {
-    
+
 	@Id
-	@GeneratedValue(strategy =GenerationType.IDENTITY) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 	private String username;
 	private String password;
@@ -22,17 +27,19 @@ public class User {
 	private String fullName;
 	private String userAddress;
 	private String profileImg;
-	private Date creationDate;
-	private Date changeDate;
+	private LocalDateTime creationDate;
+	private LocalDateTime changeDate;
 	private String phoneNumber;
+
+	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+	private List<Post> post = new ArrayList<>();
 
 	public User() {
 	}
 
-	public User(Long userId, String username, String password, String usermail, String oldPassword, String fullName,
-			String userAddress, String profileImg, Date creationDate, Date changeDate, String phoneNumber) {
-		super();
-		this.userId = userId;
+	public User(String username, String password, String usermail, String oldPassword, String fullName,
+			String userAddress, String profileImg, String phoneNumber) {
+
 		this.username = username;
 		this.password = password;
 		this.usermail = usermail;
@@ -40,8 +47,6 @@ public class User {
 		this.fullName = fullName;
 		this.userAddress = userAddress;
 		this.profileImg = profileImg;
-		this.creationDate = creationDate;
-		this.changeDate = changeDate;
 		this.phoneNumber = phoneNumber;
 	}
 
@@ -109,20 +114,32 @@ public class User {
 		this.profileImg = profileImg;
 	}
 
-	public Date getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+//	@PrePersist
+	public void setCreationDate() {
+		this.creationDate = LocalDateTime.now();
+		;
 	}
 
-	public Date getChangeDate() {
+	public LocalDateTime getChangeDate() {
 		return changeDate;
 	}
 
-	public void setChangeDate(Date changeDate) {
-		this.changeDate = changeDate;
+	// @PrePersist
+	public void setChangeDate() {
+		this.changeDate = LocalDateTime.now();
+		;
+	}
+
+	public List<Post> getPost() {
+		return post;
+	}
+
+	public void setPost(List<Post> post) {
+		this.post = post;
 	}
 
 	public String getPhoneNumber() {
@@ -133,5 +150,4 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
-	
 }

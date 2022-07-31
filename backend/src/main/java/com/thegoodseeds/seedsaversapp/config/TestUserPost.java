@@ -13,8 +13,8 @@ import com.thegoodseeds.seedsaversapp.repositories.CommentsRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 
 @Configuration
-@Profile("test")
-public class TestConfig implements CommandLineRunner {
+@Profile("disabled")
+public class TestUserPost implements CommandLineRunner {
 
 	@Autowired
 	PostRepository postRepo;
@@ -24,10 +24,10 @@ public class TestConfig implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		Post post1 = new Post(2, "Gratidão", "Olá Paulo muito Obrigada por me ajudar");
+		Post post1 = new Post(2, "Gratitude", "This is working now!");
 
-		Comments comment1 = new Comments("Você é Super Muito Obrigada, e eu gosto de java...Paciência");
-		Comments comment2 = new Comments("Você é Super Muito Obrigada, e eu gosto de java...Paciência");
+		Comments comment1 = new Comments("This is a comment test 1");
+		Comments comment2 = new Comments("This a comment test 2");
 
 		System.out.println(post1);
 		System.out.println(comment1);
@@ -37,20 +37,16 @@ public class TestConfig implements CommandLineRunner {
 		System.out.println(newPost);
 
 		comment1.setPost(newPost);
-
 		comment2.setPost(newPost);
 
 		Comments rc = commentsRepo.save(comment1);
 		Comments rc1 = commentsRepo.save(comment2);
 		
 		System.out.println(rc);
-//		System.out.println(rc1);
+		System.out.println(rc1);
 		
 		newPost.setComments(Arrays.asList(rc, rc1));
 		postRepo.save(newPost);
-//		
-//
-//      
 	}
 
 }
