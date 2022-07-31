@@ -1,11 +1,14 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
@@ -15,20 +18,23 @@ public class Comments {
 	   @Id
 	   @GeneratedValue(strategy =GenerationType.IDENTITY) 
 	   private Long commentID;
-	   private Long postId;
+	   
 	   private String commentMessage;
-	   private Timestamp createdtime;
+	   private LocalDateTime createdtime;
+	   
+	   
+	   @ManyToOne
+	   @JoinColumn(name = "postId")
+	   private Post post;
 	   
 	   public Comments() {
 		   
 	   }
 
-	public Comments(Long commentID, Long postId, String commentMessage, Timestamp createdtime) {
-		super();
-		this.commentID = commentID;
-		this.postId = postId;
+	public Comments( String commentMessage) {
+		
 		this.commentMessage = commentMessage;
-		this.createdtime = createdtime;
+		
 	}
 
 	public Long getCommentID() {
@@ -39,14 +45,7 @@ public class Comments {
 		this.commentID = commentID;
 	}
 
-	public Long getPostId() {
-		return postId;
-	}
-
-	public void setPostId(Long postId) {
-		this.postId = postId;
-	}
-
+	
 	public String getCommentMessage() {
 		return commentMessage;
 	}
@@ -55,13 +54,32 @@ public class Comments {
 		this.commentMessage = commentMessage;
 	}
 
-	public Timestamp getCreatedtime() {
+	
+	public LocalDateTime getCreatedtime() {
 		return createdtime;
 	}
 
-	public void setCreatedtime(Timestamp createdtime) {
-		this.createdtime = createdtime;
+	@PrePersist
+	public void setCreatedtime() {
+		this.createdtime = LocalDateTime.now();
 	}
-      
+
+	@Override
+	public String toString() {
+		return "Comments [commentID=" + commentID + ", commentMessage=" + commentMessage + ", createdtime="
+				+ createdtime + ", post=" + post + "]";
+	}
+
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
+	
+
+	
 	   
 }

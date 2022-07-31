@@ -8,6 +8,7 @@ public class TheGoodSeedsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TheGoodSeedsApplication.class, args);
+
 	}
 
 }
