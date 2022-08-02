@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
+
 @Entity
 @Table(name = "Seed")
 public class Seed {
@@ -16,21 +18,22 @@ public class Seed {
 	   private String popularName;
 	   private String scientificName;
 	   private String familyName;
-	   private String seedStorage;
 	   private String seedDescription;
 	   private String seedImg;
+	   
+	   private Integer typeOfStorage;
 	   
 	   public Seed() {		   
 	   }
 
-	public Seed(Long seedId, String popularName, String scientificName, String familyName, String seedStorage,
+	public Seed(Long seedId, String popularName, String scientificName, String familyName, TypeOfStorage typeOfStorage,
 			String seedDescription, String seedImg) {
-		super();
+		
 		this.seedId = seedId;
 		this.popularName = popularName;
 		this.scientificName = scientificName;
 		this.familyName = familyName;
-		this.seedStorage = seedStorage;
+		setTypeOfStorage(typeOfStorage); 
 		this.seedDescription = seedDescription;
 		this.seedImg = seedImg;
 	}
@@ -67,12 +70,14 @@ public class Seed {
 		this.familyName = familyName;
 	}
 
-	public String getSeedStorage() {
-		return seedStorage;
+	public TypeOfStorage getTypeOfStorage() {
+		return TypeOfStorage.valueOf(typeOfStorage);
 	}
 
-	public void setSeedStorage(String seedStorage) {
-		this.seedStorage = seedStorage;
+	public void setTypeOfStorage(TypeOfStorage typeOfStorage) {
+		if (typeOfStorage != null) { // verify the typeOfStorage is valid.
+			this.typeOfStorage = typeOfStorage.getCodeType();
+		}
 	}
 
 	public String getSeedDescription() {

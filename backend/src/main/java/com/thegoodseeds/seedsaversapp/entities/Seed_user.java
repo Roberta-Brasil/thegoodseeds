@@ -8,30 +8,35 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.thegoodseeds.seedsaversapp.enums.SeedStatus;
+
 @Entity
 @Table(name = "Seed_user")
 public class Seed_user {
-    
-	 @Id
-	 @GeneratedValue(strategy =GenerationType.IDENTITY) 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long seedId;
 	private Long userId;
 	private String locationOfCollenction;
 	private LocalDate dateOfCollection;
-	private String seedStatus;
+
+	// I used the datatype integer to do not break the application..see enums
+	// SeedStatus!
+	private Integer seedStatus;
 
 	public Seed_user() {
 
 	}
 
 	public Seed_user(Long seedId, Long userId, String locationOfCollenction, LocalDate dateOfCollection,
-			String seedStatus) {
-		super();
+			SeedStatus seedStatus) {
+
 		this.seedId = seedId;
 		this.userId = userId;
 		this.locationOfCollenction = locationOfCollenction;
 		this.dateOfCollection = dateOfCollection;
-		this.seedStatus = seedStatus;
+		setSeedStatus(seedStatus); // this set the seed status that i am receiving!
 	}
 
 	public Long getSeedId() {
@@ -66,13 +71,14 @@ public class Seed_user {
 		this.dateOfCollection = dateOfCollection;
 	}
 
-	public String getSeedStatus() {
-		return seedStatus;
+	public SeedStatus getSeedStatus() {
+		return SeedStatus.valueOf(seedStatus);
 	}
 
-	public void setSeedStatus(String seedStatus) {
-		this.seedStatus = seedStatus;
+	public void setSeedStatus(SeedStatus seedStatus) {
+		if (seedStatus != null) { // verify the order status is valid
+			this.seedStatus = seedStatus.getCode();
+		}
+
 	}
-   
-	
 }
