@@ -13,7 +13,7 @@ import com.thegoodseeds.seedsaversapp.repositories.CommentsRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 
 @Configuration
-@Profile("disabled")
+@Profile("test")
 public class TestPostComments implements CommandLineRunner {
 
 	@Autowired
