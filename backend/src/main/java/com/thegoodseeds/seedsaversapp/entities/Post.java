@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Post")
@@ -33,6 +34,7 @@ public class Post {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Comment> comments = new ArrayList<>();
 
+	@Transient
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;

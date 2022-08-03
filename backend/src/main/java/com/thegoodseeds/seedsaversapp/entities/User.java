@@ -33,7 +33,7 @@ public class User {
 	private String phoneNumber;
 
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
-	private List<Post> post = new ArrayList<>();
+	private List<Post> posts = new ArrayList<>();
 
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
@@ -43,7 +43,6 @@ public class User {
 
 	public User(String username, String password, String usermail, String oldPassword, String fullName,
 			String userAddress, String profileImg, String phoneNumber) {
-
 		this.username = username;
 		this.password = password;
 		this.usermail = usermail;
@@ -139,11 +138,15 @@ public class User {
 	}
 
 	public List<Post> getPost() {
-		return post;
+		return posts;
 	}
 
-	public void setPost(List<Post> post) {
-		this.post = post;
+	public void setPost(List<Post> posts) {
+		this.posts = posts;
+	}
+	
+	public void onePost(Post post) {
+		this.posts.add(post);
 	}
 
 	public String getPhoneNumber() {
@@ -169,6 +172,14 @@ public class User {
 
 	public void setChangeDate(LocalDateTime changeDate) {
 		this.changeDate = changeDate;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", usermail=" + usermail
+				+ ", oldPassword=" + oldPassword + ", fullName=" + fullName + ", userAddress=" + userAddress
+				+ ", profileImg=" + profileImg + ", creationDate=" + creationDate + ", changeDate=" + changeDate
+				+ ", phoneNumber=" + phoneNumber + ", posts=" + posts + ", comments=" + comments + "]";
 	}
 
 	
