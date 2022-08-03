@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 
 import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
@@ -13,7 +14,8 @@ import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 
 @Configuration
-@Profile("test")
+@Order(1)
+@Profile("test02")
 public class TestPostComment implements CommandLineRunner {
 
 	@Autowired
