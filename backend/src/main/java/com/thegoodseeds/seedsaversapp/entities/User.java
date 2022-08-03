@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
@@ -34,6 +35,9 @@ public class User {
 	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
 	private List<Post> post = new ArrayList<>();
 
+	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+	private List<Comment> comments = new ArrayList<>();
+	
 	public User() {
 	}
 
@@ -150,4 +154,22 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	@PrePersist
+	public void creationAt() {
+		this.creationDate = LocalDateTime.now();
+	}
+
+	public void setChangeDate(LocalDateTime changeDate) {
+		this.changeDate = changeDate;
+	}
+
+	
 }

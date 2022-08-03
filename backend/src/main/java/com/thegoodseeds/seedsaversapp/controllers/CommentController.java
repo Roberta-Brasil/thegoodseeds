@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thegoodseeds.seedsaversapp.entities.Comments;
-import com.thegoodseeds.seedsaversapp.repositories.CommentsRepository;
+import com.thegoodseeds.seedsaversapp.entities.Comment;
+import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 
 @RestController
 @RequestMapping(value = "/comments")
-public class CommentsController {
+public class CommentController {
 
 	@Autowired
-	CommentsRepository commentsRepo;
+	CommentRepository commentsRepo;
 
 	@GetMapping
-	public ResponseEntity<List<Comments>> findAll() {
+	public ResponseEntity<List<Comment>> findAll() {
 		return ResponseEntity.status(HttpStatus.OK).body(commentsRepo.findAll());
 	}
 

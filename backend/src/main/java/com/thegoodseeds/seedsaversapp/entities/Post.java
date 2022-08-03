@@ -31,7 +31,7 @@ public class Post {
 	
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<Comments> comments = new ArrayList<>();
+	private List<Comment> comments = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "userId")
@@ -81,7 +81,7 @@ public class Post {
 	}
 
 
-	public List<Comments> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
@@ -93,7 +93,7 @@ public class Post {
 		this.user = user;
 	}
 
-	public void setComments(List<Comments> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 

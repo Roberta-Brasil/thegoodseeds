@@ -7,27 +7,27 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.thegoodseeds.seedsaversapp.entities.Comments;
+import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
-import com.thegoodseeds.seedsaversapp.repositories.CommentsRepository;
+import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 
 @Configuration
 @Profile("test")
-public class TestPostComments implements CommandLineRunner {
+public class TestPostComment implements CommandLineRunner {
 
 	@Autowired
 	PostRepository postRepo;
 	@Autowired
-	CommentsRepository commentsRepo;
+	CommentRepository commentRepo;
 
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
 		Post post1 = new Post(2, "Gratitude", "This is working now!");
 
-		Comments comment1 = new Comments("This is a comment test 1");
-		Comments comment2 = new Comments("This a comment test 2");
+		Comment comment1 = new Comment("This is a comment test 1");
+		Comment comment2 = new Comment("This a comment test 2");
 
 		System.out.println(post1);
 		System.out.println(comment1);
@@ -39,8 +39,8 @@ public class TestPostComments implements CommandLineRunner {
 		comment1.setPost(newPost);
 		comment2.setPost(newPost);
 
-		Comments rc = commentsRepo.save(comment1);
-		Comments rc1 = commentsRepo.save(comment2);
+		Comment rc = commentRepo.save(comment1);
+		Comment rc1 = commentRepo.save(comment2);
 		
 		System.out.println(rc);
 		System.out.println(rc1);

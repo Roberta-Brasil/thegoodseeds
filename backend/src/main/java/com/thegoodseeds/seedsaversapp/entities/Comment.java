@@ -12,11 +12,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "Comments")
-public class Comments {
+public class Comment {
 	
 	   @Id
 	   @GeneratedValue(strategy =GenerationType.IDENTITY) 
@@ -30,11 +28,17 @@ public class Comments {
 	   @JoinColumn(name = "postId")
 	   private Post post;
 	   
-	   public Comments() {
+	   @Transient
+	   @ManyToOne
+	   @JoinColumn(name = "userId")
+	   private User user;
+
+	   
+	   public Comment() {
 		   
 	   }
 
-	public Comments( String commentMessage) {
+	public Comment( String commentMessage) {
 		
 		this.commentMessage = commentMessage;
 		
@@ -67,11 +71,6 @@ public class Comments {
 		this.createdtime = LocalDateTime.now();
 	}
 
-	@Override
-	public String toString() {
-		return "Comments [commentID=" + commentID + ", commentMessage=" + commentMessage + ", createdtime="
-				+ createdtime + ", post=" + post + "]";
-	}
 
 	public Post getPost() {
 		return post;
@@ -80,6 +79,23 @@ public class Comments {
 	public void setPost(Post post) {
 		this.post = post;
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "Comment [commentID=" + commentID + ", commentMessage=" + commentMessage + ", createdtime=" + createdtime
+				+ ", post=" + post + ", user=" + user + "]";
+	}
+	
+	
+
 
 	
 
