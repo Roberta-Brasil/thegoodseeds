@@ -35,12 +35,18 @@ public class TestUserPost implements CommandLineRunner {
 		
 		Post post1 = new Post(2, "Gratitude", "This is working now!");
 		System.out.println(post1);
+		
+		Post post2 = new Post(5,"Seed Peróba branca","I have two perobas brancas");
 
 		post1.setUser(newUser);
-		Post newPost = postRepo.save(post1);
-		System.out.println(newPost);
+		post2.setUser(newUser);
+		Post newPost1 = postRepo.save(post1);
+		Post newPost2 = postRepo.save(post2);
+		
+		System.out.println(newPost1+", "+newPost2);
 
-		newUser.onePost(newPost);
+		newUser.addPost(newPost1);
+		newUser.addPost(newPost2);
 		userRepo.save(newUser);
 		
 	}
