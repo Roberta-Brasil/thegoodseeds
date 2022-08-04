@@ -17,7 +17,7 @@ import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 public class SeedController {
 
 	@Autowired
-	SeedRepository seedRepo;
+	private SeedRepository seedRepo;
 
 	@GetMapping
 	public ResponseEntity<List<Seed>> findAll() {

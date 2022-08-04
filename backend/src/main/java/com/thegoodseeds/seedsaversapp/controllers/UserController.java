@@ -19,7 +19,7 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 public class UserController {
 
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
 
 	@GetMapping
 	public ResponseEntity<List<User>> findAll() {

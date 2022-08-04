@@ -17,7 +17,7 @@ import com.thegoodseeds.seedsaversapp.repositories.SwapTransactionRepository;
 public class SwapTransactionController {
 
 	@Autowired
-	SwapTransactionRepository swapTransactionRepo;
+	private SwapTransactionRepository swapTransactionRepo;
 
 	@GetMapping
 	public ResponseEntity<List<SwapTransaction>> findAll() {

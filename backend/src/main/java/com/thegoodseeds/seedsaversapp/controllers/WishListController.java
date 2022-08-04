@@ -17,7 +17,7 @@ import com.thegoodseeds.seedsaversapp.repositories.WishListRepository;
 public class WishListController {
 
 	@Autowired
-	WishListRepository wishlistRepo;
+	private WishListRepository wishlistRepo;
 
 	@GetMapping
 	public ResponseEntity<List<WishList>> findAll() {

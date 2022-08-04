@@ -17,10 +17,12 @@ import com.thegoodseeds.seedsaversapp.repositories.SwapRepository;
 public class SwapController {
 
 	@Autowired
-	SwapRepository swapRepo;
+	private SwapRepository swapRepo;
 
 	@GetMapping
 	public ResponseEntity<List<Swap>> findAll() {
+		
+		
 		return ResponseEntity.status(HttpStatus.OK).body(swapRepo.findAll());
 	}
 

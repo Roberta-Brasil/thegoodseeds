@@ -145,7 +145,7 @@ public class User {
 		this.posts = posts;
 	}
 	
-	public void onePost(Post post) {
+	public void addPost(Post post) {
 		this.posts.add(post);
 	}
 
