@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
 
 @Entity
-@Table(name = "Seed")
+@Table(name = "tb_seed")
 public class Seed {
 	
 	@Id

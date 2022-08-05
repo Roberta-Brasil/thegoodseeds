@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "WishList")
+@Table(name = "tb_wish_list")
 public class WishList {
 	   
 	   @Id

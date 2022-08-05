@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "SwapTransaction")
+@Table(name = "tb_swap_transaction")
 public class SwapTransaction {
 	
 	   @Id

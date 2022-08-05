@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import com.thegoodseeds.seedsaversapp.enums.SeedStatus;
 
 @Entity
-@Table(name = "Seed_user")
+@Table(name = "tb_seed_user")
 public class Seed_user {
 
 	@Id
