@@ -1,8 +1,11 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,20 +13,28 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "User")
-public class User {
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+@Entity
+@Table(name = "tb_user")
+public class User implements UserDetails, Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 	private String username;
 	private String password;
-	private String usermail;
+	private String email;
 	private String oldPassword;
 	private String fullName;
 	private String userAddress;
@@ -32,25 +43,41 @@ public class User {
 	private LocalDateTime changeDate;
 	private String phoneNumber;
 
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user")
 	private List<Post> posts = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
+	
+	 @ManyToMany(fetch = FetchType.EAGER)
+	    @JoinTable(name = "tb_users_roles",
+	            joinColumns = @JoinColumn(name = "user_id"),
+	            inverseJoinColumns = @JoinColumn(name = "role_id"))
+	    private List<Role> roles = new ArrayList<>(); 
 	
 	public User() {
 	}
 
-	public User(String username, String password, String usermail, String oldPassword, String fullName,
+	public User(String username, String password, String email, String oldPassword, String fullName,
 			String userAddress, String profileImg, String phoneNumber) {
 		this.username = username;
 		this.password = password;
-		this.usermail = usermail;
+		this.email = email;
 		this.oldPassword = oldPassword;
 		this.fullName = fullName;
 		this.userAddress = userAddress;
 		this.profileImg = profileImg;
 		this.phoneNumber = phoneNumber;
+	}
+	
+	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Long getUserId() {
@@ -61,28 +88,13 @@ public class User {
 		this.userId = userId;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getUsermail() {
-		return usermail;
-	}
-
-	public void setUsermail(String usermail) {
-		this.usermail = usermail;
 	}
 
 	public String getOldPassword() {
@@ -174,12 +186,74 @@ public class User {
 		this.changeDate = changeDate;
 	}
 
+	
+	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(changeDate, comments, creationDate, fullName, oldPassword, password, phoneNumber, posts,
+				profileImg, roles, userAddress, userId, email, username);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		return Objects.equals(changeDate, other.changeDate) && Objects.equals(comments, other.comments)
+				&& Objects.equals(creationDate, other.creationDate) && Objects.equals(fullName, other.fullName)
+				&& Objects.equals(oldPassword, other.oldPassword) && Objects.equals(password, other.password)
+				&& Objects.equals(phoneNumber, other.phoneNumber) && Objects.equals(posts, other.posts)
+				&& Objects.equals(profileImg, other.profileImg) && Objects.equals(roles, other.roles)
+				&& Objects.equals(userAddress, other.userAddress) && Objects.equals(userId, other.userId)
+				&& Objects.equals(email, other.email) && Objects.equals(username, other.username);
+	}
+
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", usermail=" + usermail
+		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", usermail=" + email
 				+ ", oldPassword=" + oldPassword + ", fullName=" + fullName + ", userAddress=" + userAddress
 				+ ", profileImg=" + profileImg + ", creationDate=" + creationDate + ", changeDate=" + changeDate
 				+ ", phoneNumber=" + phoneNumber + ", posts=" + posts + ", comments=" + comments + "]";
+	}
+	
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+	
+	@Override
+	public String getPassword() {
+		return this.password;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return roles;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 	
