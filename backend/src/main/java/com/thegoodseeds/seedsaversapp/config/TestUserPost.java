@@ -28,7 +28,7 @@ public class TestUserPost implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		User paulo = new User("Paulo", "pbss", "pbsee@hotmail.com", null, "Paulo Soares", null, null, "21986574123");
+		User paulo = new User("Paulo", "$2a$10$KT5rbfQTU8103kP6uEmkkO3W8XTc4MFH2peGPuL3sQ3X5ne.kz2oK", "pbsee@hotmail.com", null, "Paulo Soares", null, "photo.com", null);
 		
 		User newUser = userRepo.save(paulo);
 		System.out.println(newUser);
@@ -49,6 +49,12 @@ public class TestUserPost implements CommandLineRunner {
 		newUser.addPost(newPost2);
 		userRepo.save(newUser);
 		
+		User user = new User();
+		user.setEmail("joao@hotmail.com");
+		user.setPassword("$2a$12$C0/tNE9yniJdMrfV40nnAuhn.zllXTvZr2AzmLP9Eo.2UiuPFxFa.");
+		
+		userRepo.save(user);
 	}
+
 
 }

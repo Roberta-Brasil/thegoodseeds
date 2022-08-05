@@ -1,11 +1,15 @@
 package com.thegoodseeds.seedsaversapp.dtos.request;
 
-public class PostRequestDTO {
+public class PostRequestDto {
 	
     private String title;
     private String postMessage;
     
-	public PostRequestDTO(int likesQuantity, String title, String postMessage) {
+    public PostRequestDto() {
+    	
+    }
+    
+	public PostRequestDto(String title, String postMessage) {
 		this.title = title;
 		this.postMessage = postMessage;
 	}

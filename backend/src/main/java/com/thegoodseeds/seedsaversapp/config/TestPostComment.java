@@ -41,13 +41,15 @@ public class TestPostComment implements CommandLineRunner {
 		comment1.setPost(newPost);
 		comment2.setPost(newPost);
 
-		Comment rc = commentRepo.save(comment1);
-		Comment rc1 = commentRepo.save(comment2);
+		Comment rc1 = commentRepo.save(comment1);
+		Comment rc2 = commentRepo.save(comment2);
 		
-		System.out.println(rc);
 		System.out.println(rc1);
+		System.out.println(rc2);
 		
-		newPost.setComments(Arrays.asList(rc, rc1));
+		newPost.addComment(rc1);
+		newPost.addComment(rc2);
+		
 		postRepo.save(newPost);
 	}
 

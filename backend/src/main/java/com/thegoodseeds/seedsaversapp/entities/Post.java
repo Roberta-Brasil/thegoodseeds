@@ -6,19 +6,16 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
-@Table(name = "Post")
+@Table(name = "tb_posts")
 public class Post {
 
 	@Id
@@ -28,28 +25,35 @@ public class Post {
 	private int likesQuantity;
 	private String title;
 	private String postMessage;
-	private Long seedId;
 	
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	@Transient
+	
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
 
 	public Post() {
-
+		instanceLocalDateTime();
 	}
 
 	public Post(int likesQuantity, String title, String postMessage) {
 		this.likesQuantity = likesQuantity;
 		this.title = title;
 		this.postMessage = postMessage;
-
+	    instanceLocalDateTime();
+	}
+	
+	public void addComment(Comment comment) {
+		this.comments.add(comment);
+	}
+	
+	private void instanceLocalDateTime() {
+		this.createdAt = LocalDateTime.now();
 	}
 
+	
 	public Long getPostId() {
 		return postId;
 	}
@@ -66,25 +70,20 @@ public class Post {
 		this.likesQuantity = likesQuantity;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public String getPostMessage() {
 		return postMessage;
 	}
 
 	public void setPostMessage(String postMessage) {
 		this.postMessage = postMessage;
-	}
-
-	public Long getSeedId() {
-		return seedId;
-	}
-
-	public void setSeedId(Long seedId) {
-		this.seedId = seedId;
-	}
-
-
-	public List<Comment> getComments() {
-		return comments;
 	}
 
 	public User getUser() {
@@ -95,31 +94,18 @@ public class Post {
 		this.user = user;
 	}
 
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	@PrePersist
-	public void setCreatedAt() {
-		this.createdAt = LocalDateTime.now();
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
+	public List<Comment> getComments() {
+		return comments;
 	}
 
 	@Override
 	public String toString() {
 		return "Post [postId=" + postId + ", createdAt=" + createdAt + ", likesQuantity=" + likesQuantity + ", title="
-				+ title + ", postMessage=" + postMessage + ", seedId=" + seedId + ", comments=" + comments + ", user="
+				+ title + ", postMessage=" + postMessage +", comments=" + comments + ", user="
 				+ user + "]";
 	}
 

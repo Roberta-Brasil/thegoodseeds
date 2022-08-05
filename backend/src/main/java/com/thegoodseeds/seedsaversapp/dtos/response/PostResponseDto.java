@@ -1,25 +1,55 @@
 package com.thegoodseeds.seedsaversapp.dtos.response;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
 
 public class PostResponseDto {
 	
 	private int likesQuantity;
     private String title;
-    private String postMessage;    
+    private String postMessage;
+    private LocalDateTime createdTime;
     
     @JsonIgnore
     private Long id;
+    
+    private UserResponseDto user;
+    
+    private List<CommentResponseDto> comments = new ArrayList<>();
     
 	
     public PostResponseDto(Post post) {
      this.likesQuantity = post.getLikesQuantity();
      this.title = post.getTitle();
      this.postMessage = post.getPostMessage();
-     this.id=post.getPostId();
+     this.createdTime = LocalDateTime.now();
+     this.id = post.getPostId();
+     this.comments = convertList(post.getComments());
+     this.user = new UserResponseDto(post.getUser());
     }
     
+    private List<CommentResponseDto> convertList(List<Comment> comments) {
+    	
+    	List<CommentResponseDto> commentsDto = comments.stream().map(CommentResponseDto::new).collect(Collectors.toList());
+    		
+     	return commentsDto;
+    }
+    
+  
+	public LocalDateTime getCreatedTime() {
+		return createdTime;
+	}
+
+	public List<CommentResponseDto> getComments() {
+		return comments;
+	}
+
 	public int getLikesQuantity() {
 		return likesQuantity;
 	}
@@ -40,13 +70,22 @@ public class PostResponseDto {
 	}
 	
 	
-
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	
+
+	public UserResponseDto getUser() {
+		return user;
+	}
+
+	public void setUser(UserResponseDto user) {
+		this.user = user;
 	}
 
 	@Override

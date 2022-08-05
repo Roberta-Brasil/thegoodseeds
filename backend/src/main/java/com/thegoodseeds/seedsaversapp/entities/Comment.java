@@ -8,12 +8,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
-@Table(name = "Comments")
+@Table(name = "tb_comments")
 public class Comment {
 	
 	   @Id
@@ -21,28 +19,33 @@ public class Comment {
 	   private Long commentID;
 	   
 	   private String commentMessage;
-	   private LocalDateTime createdtime;
+	   private LocalDateTime createdtime; // trocar o nome
 	   
-	   @Transient
+	   
 	   @ManyToOne
 	   @JoinColumn(name = "postId")
 	   private Post post;
 	   
-	   @Transient
+	   
 	   @ManyToOne
 	   @JoinColumn(name = "userId")
 	   private User user;
 
 	   
-	   public Comment() {
-		   
-	   }
-
-	public Comment( String commentMessage) {
-		
-		this.commentMessage = commentMessage;
-		
+	
+	public Comment() {
+		   instanceLocalDateTime();
 	}
+
+	public Comment(String commentMessage) {	
+		this.commentMessage = commentMessage;
+		instanceLocalDateTime();
+	}
+	
+	private void instanceLocalDateTime() {
+		this.createdtime = LocalDateTime.now();
+	}
+
 
 	public Long getCommentID() {
 		return commentID;
@@ -65,12 +68,6 @@ public class Comment {
 	public LocalDateTime getCreatedtime() {
 		return createdtime;
 	}
-
-	@PrePersist
-	public void setCreatedtime() {
-		this.createdtime = LocalDateTime.now();
-	}
-
 
 	public Post getPost() {
 		return post;
