@@ -1,6 +1,7 @@
 package com.thegoodseeds.seedsaversapp.controllers;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDto;
 import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDto;
 import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDto;
-import com.thegoodseeds.seedsaversapp.service.PostService;
+import com.thegoodseeds.seedsaversapp.services.PostService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -60,18 +61,18 @@ public class PostController {
 	
 	@PutMapping("/{id}")
 	@Operation(summary= "Update post in the system.")
-	public ResponseEntity<PostResponseDto> update(@PathVariable Long id, @RequestBody PostRequestDto obj) {
+	public ResponseEntity<PostResponseDto> update(@PathVariable Long id, @RequestBody PostRequestDto obj, Principal user) {
 		
-		PostResponseDto postDto = postService.update(id,obj);
+		PostResponseDto postDto = postService.update(id,obj,user);
 		
 		return ResponseEntity.ok().body(postDto);
 	}
 	
 	@DeleteMapping("/{id}")
 	@Operation(summary= "Delete a post in the system.")
-	public ResponseEntity<String> delete(@PathVariable Long id) {
+	public ResponseEntity<String> delete(@PathVariable Long id, Principal user) {
 		
-		String message = postService.delete(id);
+		String message = postService.delete(id,user);
 			
 		return ResponseEntity.ok().body(message);
 	}
