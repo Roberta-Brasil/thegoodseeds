@@ -1,4 +1,4 @@
-package com.thegoodseeds.seedsaversapp.controllers.exceptionConfig;
+package com.thegoodseeds.seedsaversapp.controllers.exceptionConfigs;
 
 import java.time.Instant;
 

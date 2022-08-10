@@ -1,4 +1,4 @@
-package com.thegoodseeds.seedsaversapp.service.exceptions;
+package com.thegoodseeds.seedsaversapp.services.exceptions;
 
 
 public class ResourceNotFoundException extends RuntimeException {
