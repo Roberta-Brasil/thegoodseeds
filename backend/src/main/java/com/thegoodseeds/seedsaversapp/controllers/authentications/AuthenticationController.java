@@ -1,4 +1,4 @@
-package com.thegoodseeds.seedsaversapp.controllers.authentication;
+package com.thegoodseeds.seedsaversapp.controllers.authentications;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.thegoodseeds.seedsaversapp.dtos.request.LoginFormRequestDto;
 import com.thegoodseeds.seedsaversapp.dtos.response.TokenDto;
-import com.thegoodseeds.seedsaversapp.service.AuthenticationService;
+import com.thegoodseeds.seedsaversapp.services.AuthenticationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 

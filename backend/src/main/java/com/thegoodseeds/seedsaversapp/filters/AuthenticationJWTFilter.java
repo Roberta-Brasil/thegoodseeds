@@ -1,4 +1,4 @@
-package com.thegoodseeds.seedsaversapp.filter;
+package com.thegoodseeds.seedsaversapp.filters;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
-import com.thegoodseeds.seedsaversapp.service.TokenService;
+import com.thegoodseeds.seedsaversapp.services.TokenService;
 
 public class AuthenticationJWTFilter extends OncePerRequestFilter { // Filtro de autenticação! antes da API chamar a classe de segurança, ela vai chamar essa aqui antes.
     //(NAS REQUISIÇÕES), NÃO QUANDO SOBE A APLICAÇÃO.
