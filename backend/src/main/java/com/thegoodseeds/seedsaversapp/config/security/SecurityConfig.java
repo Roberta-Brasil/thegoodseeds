@@ -16,14 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.thegoodseeds.seedsaversapp.filter.AuthenticationJWTFilter;
+import com.thegoodseeds.seedsaversapp.filters.AuthenticationJWTFilter;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
-import com.thegoodseeds.seedsaversapp.service.TokenService;
+import com.thegoodseeds.seedsaversapp.services.TokenService;
 
 
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity // Desativa as conf padrões do Spring Security
 @Profile(value = {"test","prod"})
 public class SecurityConfig {
 	
@@ -34,7 +34,7 @@ public class SecurityConfig {
     @Autowired
     private UserRepository userRepository;
     
-    @Bean
+        @Bean
         PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
@@ -51,6 +51,7 @@ public class SecurityConfig {
         http// Usar o basic para se autenticar
                 .authorizeRequests()
                 .antMatchers("/auth").permitAll()
+                .antMatchers("/registration").permitAll()
                 .antMatchers("/**").authenticated() // Estou permitindo todos os acessos no sistema.
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // DIZ QUE A APLICAÇÃO NÃO TEM ESTADO, NÃO GUARDA INFORMAÇÕES DE LOGIN!
@@ -60,7 +61,7 @@ public class SecurityConfig {
         return http.build();
     }
 	
-	@Bean
+	    @Bean
         WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**","/h2-console/**");
     }
