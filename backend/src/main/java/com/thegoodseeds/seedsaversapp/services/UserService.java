@@ -1,4 +1,4 @@
-package com.thegoodseeds.seedsaversapp.service;
+package com.thegoodseeds.seedsaversapp.services;
 
 import java.util.Optional;
 

@@ -32,7 +32,7 @@ public class User implements UserDetails, Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
-	private String username;
+	private String name;
 	private String password;
 	private String email;
 	private String oldPassword;
@@ -56,11 +56,22 @@ public class User implements UserDetails, Serializable {
 	    private List<Role> roles = new ArrayList<>(); 
 	
 	public User() {
+		
+	}
+	
+	
+
+	public User(String name, String password, String email) {
+		this.name = name;
+		this.password = password;
+		this.email = email;
 	}
 
-	public User(String username, String password, String email, String oldPassword, String fullName,
+
+
+	public User(String name, String password, String email, String oldPassword, String fullName,
 			String userAddress, String profileImg, String phoneNumber) {
-		this.username = username;
+		this.name = name;
 		this.password = password;
 		this.email = email;
 		this.oldPassword = oldPassword;
@@ -88,8 +99,8 @@ public class User implements UserDetails, Serializable {
 		this.userId = userId;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 
@@ -189,10 +200,16 @@ public class User implements UserDetails, Serializable {
 	
 	
 	
+	public String getName() {
+		return name;
+	}
+
+
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(changeDate, comments, creationDate, fullName, oldPassword, password, phoneNumber, posts,
-				profileImg, roles, userAddress, userId, email, username);
+				profileImg, roles, userAddress, userId, email, name);
 	}
 
 	@Override
@@ -210,12 +227,12 @@ public class User implements UserDetails, Serializable {
 				&& Objects.equals(phoneNumber, other.phoneNumber) && Objects.equals(posts, other.posts)
 				&& Objects.equals(profileImg, other.profileImg) && Objects.equals(roles, other.roles)
 				&& Objects.equals(userAddress, other.userAddress) && Objects.equals(userId, other.userId)
-				&& Objects.equals(email, other.email) && Objects.equals(username, other.username);
+				&& Objects.equals(email, other.email) && Objects.equals(name, other.name);
 	}
 
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", password=" + password + ", usermail=" + email
+		return "User [userId=" + userId + ", username=" + name + ", password=" + password + ", usermail=" + email
 				+ ", oldPassword=" + oldPassword + ", fullName=" + fullName + ", userAddress=" + userAddress
 				+ ", profileImg=" + profileImg + ", creationDate=" + creationDate + ", changeDate=" + changeDate
 				+ ", phoneNumber=" + phoneNumber + ", posts=" + posts + ", comments=" + comments + "]";
