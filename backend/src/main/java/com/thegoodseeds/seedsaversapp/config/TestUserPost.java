@@ -13,8 +13,8 @@ import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 
 @Configuration
-@Order(2)
-@Profile("test")
+@Order(value = 2)
+@Profile(value = {"test","dev"})
 public class TestUserPost implements CommandLineRunner {
 
 	@Autowired
@@ -28,13 +28,12 @@ public class TestUserPost implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		User paulo = new User("Paulo", "$2a$10$KT5rbfQTU8103kP6uEmkkO3W8XTc4MFH2peGPuL3sQ3X5ne.kz2oK", "pbsee@hotmail.com", null, "Paulo Soares", null, "photo.com", null);
+		User eugene = new User("Eugene", "$2a$10$KT5rbfQTU8103kP6uEmkkO3W8XTc4MFH2peGPuL3sQ3X5ne.kz2oK", "eugene@hotmail.com", null, "Eugene McLaughlin", null, "photo.com", null);
 		
-		User newUser = userRepo.save(paulo);
-		System.out.println(newUser);
+		User newUser = userRepo.save(eugene);
 		
 		Post post1 = new Post(2, "Gratitude", "This is working now!");
-		System.out.println(post1);
+	
 		
 		Post post2 = new Post(5,"Seed Peróba branca","I have two perobas brancas");
 
@@ -43,7 +42,6 @@ public class TestUserPost implements CommandLineRunner {
 		Post newPost1 = postRepo.save(post1);
 		Post newPost2 = postRepo.save(post2);
 		
-		System.out.println(newPost1+", "+newPost2);
 
 		newUser.addPost(newPost1);
 		newUser.addPost(newPost2);

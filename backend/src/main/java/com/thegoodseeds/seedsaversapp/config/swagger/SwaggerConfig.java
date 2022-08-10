@@ -23,7 +23,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    OpenAPI apiAlmada() {
+    OpenAPI apiRoberta() {
         return new OpenAPI()
                 .info(new Info().title("The Good Seeds API")
                         .description("Thesis project of the API of Roberta")
