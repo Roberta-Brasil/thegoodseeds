@@ -13,7 +13,7 @@ import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
 public class Seed {
 	
 	@Id
-	@GeneratedValue(strategy =GenerationType.IDENTITY) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	   private Long seedId;
 	   private String popularName;
 	   private String scientificName;

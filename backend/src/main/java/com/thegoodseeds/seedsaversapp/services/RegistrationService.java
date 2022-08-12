@@ -3,6 +3,7 @@ package com.thegoodseeds.seedsaversapp.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
 
 @Service
+@Profile(value = {"test","prod"})
 public class RegistrationService {
 	
 	@Autowired

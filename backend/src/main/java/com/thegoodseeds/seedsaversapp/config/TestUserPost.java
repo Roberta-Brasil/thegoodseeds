@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 
 import com.thegoodseeds.seedsaversapp.entities.Post;
+import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
+import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
 import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
+import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 
 @Configuration
@@ -18,12 +21,16 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 public class TestUserPost implements CommandLineRunner {
 
 	@Autowired
-	PostRepository postRepo;
+	private PostRepository postRepo;
 	@Autowired
-	CommentRepository commentsRepo;
+	private CommentRepository commentsRepo;
 	
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
+	
+	@Autowired
+	private SeedRepository seedRepo;
+	
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -52,6 +59,12 @@ public class TestUserPost implements CommandLineRunner {
 		user.setPassword("$2a$12$C0/tNE9yniJdMrfV40nnAuhn.zllXTvZr2AzmLP9Eo.2UiuPFxFa.");
 		
 		userRepo.save(user);
+		
+		Seed seed = new Seed(1l,"Teste","TestSpecif","FamilySpecifc",TypeOfStorage.BAG_STORAGE, "seedSDesceription",".com.br");
+		
+		
+		seedRepo.save(seed);
+		
 	}
 
 
