@@ -1,0 +1,15 @@
+.swap-btn {
+    height: 45px;
+    width: 45px;
+    background: rgba(179, 163, 164, 0.1);
+    border: 1px solid #F28322;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .swap-btn img {
+      width: 19px;
+  }
