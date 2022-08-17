@@ -54,7 +54,11 @@ public class User implements UserDetails, Serializable {
 	            joinColumns = @JoinColumn(name = "user_id"),
 	            inverseJoinColumns = @JoinColumn(name = "role_id"))
 	    private List<Role> roles = new ArrayList<>(); 
-	
+	 
+	 
+	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	    private List<Seed> seeds = new ArrayList<>();
+	 
 	public User() {
 		
 	}
@@ -81,7 +85,9 @@ public class User implements UserDetails, Serializable {
 		this.phoneNumber = phoneNumber;
 	}
 	
-	
+	public void addSeed(Seed seed) {
+		this.seeds.add(seed);
+	}
 
 	public String getEmail() {
 		return email;
@@ -198,37 +204,38 @@ public class User implements UserDetails, Serializable {
 	}
 
 	
-	
-	
 	public String getName() {
 		return name;
 	}
 
 
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(changeDate, comments, creationDate, fullName, oldPassword, password, phoneNumber, posts,
-				profileImg, roles, userAddress, userId, email, name);
+	public List<Seed> getSeeds() {
+		return seeds;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		User other = (User) obj;
-		return Objects.equals(changeDate, other.changeDate) && Objects.equals(comments, other.comments)
-				&& Objects.equals(creationDate, other.creationDate) && Objects.equals(fullName, other.fullName)
-				&& Objects.equals(oldPassword, other.oldPassword) && Objects.equals(password, other.password)
-				&& Objects.equals(phoneNumber, other.phoneNumber) && Objects.equals(posts, other.posts)
-				&& Objects.equals(profileImg, other.profileImg) && Objects.equals(roles, other.roles)
-				&& Objects.equals(userAddress, other.userAddress) && Objects.equals(userId, other.userId)
-				&& Objects.equals(email, other.email) && Objects.equals(name, other.name);
-	}
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(changeDate, comments, creationDate, fullName, oldPassword, password, phoneNumber, posts,
+//				profileImg, roles, userAddress, userId, email, name);
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		User other = (User) obj;
+//		return Objects.equals(changeDate, other.changeDate) && Objects.equals(comments, other.comments)
+//				&& Objects.equals(creationDate, other.creationDate) && Objects.equals(fullName, other.fullName)
+//				&& Objects.equals(oldPassword, other.oldPassword) && Objects.equals(password, other.password)
+//				&& Objects.equals(phoneNumber, other.phoneNumber) && Objects.equals(posts, other.posts)
+//				&& Objects.equals(profileImg, other.profileImg) && Objects.equals(roles, other.roles)
+//				&& Objects.equals(userAddress, other.userAddress) && Objects.equals(userId, other.userId)
+//				&& Objects.equals(email, other.email) && Objects.equals(name, other.name);
+//	}
 
 	@Override
 	public String toString() {

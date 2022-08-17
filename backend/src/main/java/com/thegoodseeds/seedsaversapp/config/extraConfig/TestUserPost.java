@@ -1,4 +1,6 @@
-package com.thegoodseeds.seedsaversapp.config;
+package com.thegoodseeds.seedsaversapp.config.extraConfig;
+
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,20 +12,19 @@ import com.thegoodseeds.seedsaversapp.entities.Post;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
-import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 
 @Configuration
 @Order(value = 2)
-@Profile(value = {"test","dev"})
+@Profile(value = {"test"})
 public class TestUserPost implements CommandLineRunner {
 
 	@Autowired
 	private PostRepository postRepo;
-	@Autowired
-	private CommentRepository commentsRepo;
+//	@Autowired
+//	private CommentRepository commentsRepo;
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -60,8 +61,8 @@ public class TestUserPost implements CommandLineRunner {
 		
 		userRepo.save(user);
 		
-		Seed seed = new Seed(1l,"Teste","TestSpecif","FamilySpecifc",TypeOfStorage.BAG_STORAGE, "seedSDesceription",".com.br");
-		
+		Seed seed = new Seed(1l,"Test","TestSpecif","FamilySpecifc",
+				TypeOfStorage.BAG_STORAGE, "seedSDesceription",".com.br","Location", LocalDate.now());
 		
 		seedRepo.save(seed);
 		
