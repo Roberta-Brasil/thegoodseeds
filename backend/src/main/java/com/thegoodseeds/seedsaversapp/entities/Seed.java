@@ -1,9 +1,14 @@
 package com.thegoodseeds.seedsaversapp.entities;
 
+import java.time.LocalDate;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
@@ -20,14 +25,25 @@ public class Seed {
 	   private String familyName;
 	   private String seedDescription;
 	   private String seedImg;
+	   private String locationOfCollection;
+	   private LocalDate dateOfCollection;
 	   
 	   private Integer typeOfStorage;
 	   
-	   public Seed() {		   
+	   @ManyToOne
+	   private User user;
+	   
+	   @OneToOne(mappedBy = "seed", cascade = CascadeType.ALL)
+	   private Post post;
+	   
+	   
+	   public Seed() {	
+		   
 	   }
 
 	public Seed(Long seedId, String popularName, String scientificName, String familyName, TypeOfStorage typeOfStorage,
-			String seedDescription, String seedImg) {
+			String seedDescription, String seedImg, String locationOfCollection,
+	   LocalDate dateOfCollection) {
 		
 		this.seedId = seedId;
 		this.popularName = popularName;
@@ -36,6 +52,8 @@ public class Seed {
 		setTypeOfStorage(typeOfStorage); 
 		this.seedDescription = seedDescription;
 		this.seedImg = seedImg;
+		this.locationOfCollection = locationOfCollection;
+		this.dateOfCollection = dateOfCollection;
 	}
 
 	public Long getSeedId() {
@@ -94,6 +112,40 @@ public class Seed {
 
 	public void setSeedImg(String seedImg) {
 		this.seedImg = seedImg;
+	}
+	
+	
+
+	public String getLocationOfCollection() {
+		return locationOfCollection;
+	}
+
+	public void setLocationOfCollection(String locationOfCollection) {
+		this.locationOfCollection = locationOfCollection;
+	}
+
+	public LocalDate getDateOfCollection() {
+		return dateOfCollection;
+	}
+
+	public void setDateOfCollection(LocalDate dateOfCollection) {
+		this.dateOfCollection = dateOfCollection;
+	}
+	
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public String toString() {
+		return "Seed [seedId=" + seedId + ", popularName=" + popularName + ", scientificName=" + scientificName
+				+ ", familyName=" + familyName + ", seedDescription=" + seedDescription + ", seedImg=" + seedImg
+				+ ", typeOfStorage=" + typeOfStorage + "]";
 	}
 	   
 	   
