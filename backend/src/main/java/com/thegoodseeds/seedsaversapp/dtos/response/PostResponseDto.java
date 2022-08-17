@@ -11,6 +11,7 @@ import com.thegoodseeds.seedsaversapp.entities.Post;
 
 public class PostResponseDto {
 	
+	private Long postId;
 	private int likesQuantity;
     private String title;
     private String postMessage;
@@ -25,6 +26,8 @@ public class PostResponseDto {
     
 	
     public PostResponseDto(Post post) {
+    
+     this.postId = post.getPostId();
      this.likesQuantity = post.getLikesQuantity();
      this.title = post.getTitle();
      this.postMessage = post.getPostMessage();
@@ -32,7 +35,7 @@ public class PostResponseDto {
      this.id = post.getPostId();
      this.comments = convertList(post.getComments());
      this.user = new UserResponseDto(post.getUser());
-    }
+         }
     
     private List<CommentResponseDto> convertList(List<Comment> comments) {
     	
@@ -88,10 +91,22 @@ public class PostResponseDto {
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "PostRequestDTO [likesQuantity=" + likesQuantity + ", title=" + title + ", postMessage=" + postMessage
-				+ "]";
+	
+	public Long getPostId() {
+		return postId;
 	}
 
+	public void setPostId(Long postId) {
+		this.postId = postId;
+	}
+
+	@Override
+	public String toString() {
+		return "PostResponseDto [postId=" + postId + ", likesQuantity=" + likesQuantity + ", title=" + title
+				+ ", postMessage=" + postMessage + ", createdTime=" + createdTime + ", id=" + id + ", user=" + user
+				+ ", comments=" + comments + "]";
+	}
+	
+	
+ 
 }

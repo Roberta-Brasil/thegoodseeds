@@ -49,7 +49,7 @@ public class PostController {
 	}
 
 	@PostMapping
-	@Operation(summary= "Insert a post in the system.")
+	@Operation(summary= "Insert a post in the system.")              // TEM QUE RECEBER UM SEED COMO PARAMETRO?
 	public ResponseEntity<PostResponseDto> insert(@RequestBody PostRequestDto obj, UriComponentsBuilder uriBuilder) {
 		
 		PostResponseDto postDto = postService.insert(obj); 

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -33,6 +34,9 @@ public class Post {
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
+	
+	@OneToOne()
+	private Seed seed;
 
 	public Post() {
 		instanceLocalDateTime();
@@ -102,11 +106,14 @@ public class Post {
 		return comments;
 	}
 
-	@Override
-	public String toString() {
-		return "Post [postId=" + postId + ", createdAt=" + createdAt + ", likesQuantity=" + likesQuantity + ", title="
-				+ title + ", postMessage=" + postMessage +", comments=" + comments + ", user="
-				+ user + "]";
+	
+
+	public Seed getSeed() {
+		return seed;
+	}
+
+	public void setSeed(Seed seed) {
+		this.seed = seed;
 	}
 
 

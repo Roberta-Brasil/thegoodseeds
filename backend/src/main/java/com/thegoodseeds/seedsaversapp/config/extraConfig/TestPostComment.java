@@ -1,6 +1,4 @@
-package com.thegoodseeds.seedsaversapp.config;
-
-import java.util.Arrays;
+package com.thegoodseeds.seedsaversapp.config.extraConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
