@@ -13,46 +13,45 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
 
 @Service
-@Profile(value = {"test","prod"})
+@Profile(value = { "test", "prod" })
 public class RegistrationService {
-	
+
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	@Autowired
 	private PasswordEncoder encoder;
-	
+
 	public User register(RegisterUserRequestDto userDto) {
-		
+
 		String email = userDto.getEmail();
-		
+
 		emailAlreadyExistsValidation(email);
-		
+
 		User user = createUser(userDto);
-		
+
 		user = userRepo.save(user);
 
 		return user;
 	}
-	
+
 	private void emailAlreadyExistsValidation(String email) {
-       
+
 		Optional<User> userDataBase = userRepo.findByEmail(email);
 
-		if(userDataBase.isPresent()) {
-			throw new EmailAlreadyExistsException("Email "+email+" already exists in the system");
+		if (userDataBase.isPresent()) {
+			throw new EmailAlreadyExistsException("Email " + email + " already exists in the system");
 		}
 	}
-	
+
 	private User createUser(RegisterUserRequestDto userDto) {
-		
+
 		String password = userDto.getPassword();
-		
+
 		String passwordEncoder = encoder.encode(password);
-		
-		User user = new User(userDto.getUserName(),passwordEncoder,userDto.getEmail());
-		
-		
+
+		User user = new User(userDto.getUserName(), passwordEncoder, userDto.getEmail());
+
 		return user;
 	}
 

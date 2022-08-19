@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.thegoodseeds.seedsaversapp.services.RegistrationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/registration")
 @Profile(value = {"test","prod"})

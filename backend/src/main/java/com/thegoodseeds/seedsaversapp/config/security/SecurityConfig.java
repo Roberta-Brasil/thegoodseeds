@@ -25,7 +25,7 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.TokenService;
 
 @Configuration
-@EnableWebSecurity // Desativa as conf padrões do Spring Security
+@EnableWebSecurity //Deactivate the standard setting of Spring Security
 @Profile(value = { "test", "prod"})
 public class SecurityConfig {
 
@@ -49,14 +49,14 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http// Usar o basic para se autenticar
+		http
       .authorizeRequests()
       .antMatchers("/auth").permitAll()
-     .antMatchers("/registration").permitAll()
-      .antMatchers("/**").authenticated() // (ARRUMAR MÉTODO, ESTÁ BLOQUEANDO O SWAGGER). !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      .antMatchers("/registration").permitAll()
+      //.antMatchers("/**").authenticated() // (ARRUMAR MÉTODO, ESTÁ BLOQUEANDO O SWAGGER). !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       .and().csrf().disable()
-     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // DIZ QUE A APLICAÇÃO NÃO TEM ESTADO, NÃO GUARDA INFORMAÇÕES DE LOGIN!
-      .and().addFilterBefore(new AuthenticationJWTFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class); // Adiciona um FILTRO, Antes
+      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // It says the application is stateless, it does not store login information!
+      .and().addFilterBefore(new AuthenticationJWTFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class); // Adding filter, Antes
 
 
 		return http.build();

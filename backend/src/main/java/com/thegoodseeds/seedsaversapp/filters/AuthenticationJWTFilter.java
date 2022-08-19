@@ -1,6 +1,7 @@
 package com.thegoodseeds.seedsaversapp.filters;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,7 +29,9 @@ public class AuthenticationJWTFilter extends OncePerRequestFilter { // Filtro de
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) // Método para prosseguir com a requisição!
             throws ServletException, IOException {
-        String token = recoverToken(request);
+        
+    	
+    	String token = recoverToken(request);
         boolean valid = tokenService.isTokenValid(token);// retorna V/F se o token está valido
         if (valid) { // se o token estiver válido
             recoverUser(token); // autentica o usuário.

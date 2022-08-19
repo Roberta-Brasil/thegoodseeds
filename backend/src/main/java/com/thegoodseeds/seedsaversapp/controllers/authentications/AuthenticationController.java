@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import com.thegoodseeds.seedsaversapp.services.AuthenticationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
+@CrossOrigin("*")
 @RestController   // Identificando  que é um rest-controller
 @RequestMapping(value = "/auth")   // Recurso para "encontrar" esse controller
 @Profile(value = {"prod","test"})

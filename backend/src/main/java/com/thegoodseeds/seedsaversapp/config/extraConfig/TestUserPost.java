@@ -1,30 +1,25 @@
 package com.thegoodseeds.seedsaversapp.config.extraConfig;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-
-import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
-import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
-import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 
 @Configuration
 @Order(value = 2)
 @Profile(value = { "test" })
 public class TestUserPost implements CommandLineRunner {
 
-	@Autowired
-	private PostRepository postRepo;
 //	@Autowired
-//	private CommentRepository commentsRepo;
-
-	@Autowired
-	private UserRepository userRepo;
-
-	@Autowired
-	private SeedRepository seedRepo;
+//	private PostRepository postRepo;
+////	@Autowired
+////	private CommentRepository commentsRepo;
+//
+//	@Autowired
+//	private UserRepository userRepo;
+//
+//	@Autowired
+//	private SeedRepository seedRepo;
 
 	@Override
 	public void run(String... args) throws Exception {

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
@@ -48,33 +47,27 @@ public class User implements UserDetails, Serializable {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
-	
-	 @ManyToMany(fetch = FetchType.EAGER)
-	    @JoinTable(name = "tb_users_roles",
-	            joinColumns = @JoinColumn(name = "user_id"),
-	            inverseJoinColumns = @JoinColumn(name = "role_id"))
-	    private List<Role> roles = new ArrayList<>(); 
-	 
-	 
-	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	    private List<Seed> seeds = new ArrayList<>();
-	 
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "tb_users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private List<Role> roles = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Seed> seeds = new ArrayList<>();
+
 	public User() {
-		
+		setCreationDate();
 	}
-	
-	
 
 	public User(String name, String password, String email) {
 		this.name = name;
 		this.password = password;
 		this.email = email;
+		setCreationDate();
 	}
 
-
-
-	public User(String name, String password, String email, String oldPassword, String fullName,
-			String userAddress, String profileImg, String phoneNumber) {
+	public User(String name, String password, String email, String oldPassword, String fullName, String userAddress,
+			String profileImg, String phoneNumber) {
 		this.name = name;
 		this.password = password;
 		this.email = email;
@@ -84,7 +77,7 @@ public class User implements UserDetails, Serializable {
 		this.profileImg = profileImg;
 		this.phoneNumber = phoneNumber;
 	}
-	
+
 	public void addSeed(Seed seed) {
 		this.seeds.add(seed);
 	}
@@ -108,7 +101,6 @@ public class User implements UserDetails, Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 	public void setPassword(String password) {
 		this.password = password;
@@ -173,7 +165,7 @@ public class User implements UserDetails, Serializable {
 	public void setPost(List<Post> posts) {
 		this.posts = posts;
 	}
-	
+
 	public void addPost(Post post) {
 		this.posts.add(post);
 	}
@@ -203,11 +195,9 @@ public class User implements UserDetails, Serializable {
 		this.changeDate = changeDate;
 	}
 
-	
 	public String getName() {
 		return name;
 	}
-
 
 	public List<Seed> getSeeds() {
 		return seeds;
@@ -244,12 +234,12 @@ public class User implements UserDetails, Serializable {
 				+ ", profileImg=" + profileImg + ", creationDate=" + creationDate + ", changeDate=" + changeDate
 				+ ", phoneNumber=" + phoneNumber + ", posts=" + posts + ", comments=" + comments + "]";
 	}
-	
+
 	@Override
 	public String getUsername() {
 		return this.email;
 	}
-	
+
 	@Override
 	public String getPassword() {
 		return this.password;
@@ -280,5 +270,4 @@ public class User implements UserDetails, Serializable {
 		return true;
 	}
 
-	
 }
