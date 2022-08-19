@@ -26,15 +26,14 @@ public class Post {
 	private int likesQuantity;
 	private String title;
 	private String postMessage;
-	
+
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
-	
 	@ManyToOne
 	@JoinColumn(name = "userId")
 	private User user;
-	
+
 	@OneToOne()
 	private Seed seed;
 
@@ -46,18 +45,17 @@ public class Post {
 		this.likesQuantity = likesQuantity;
 		this.title = title;
 		this.postMessage = postMessage;
-	    instanceLocalDateTime();
+		instanceLocalDateTime();
 	}
-	
+
 	public void addComment(Comment comment) {
 		this.comments.add(comment);
 	}
-	
+
 	private void instanceLocalDateTime() {
 		this.createdAt = LocalDateTime.now();
 	}
 
-	
 	public Long getPostId() {
 		return postId;
 	}
@@ -106,8 +104,6 @@ public class Post {
 		return comments;
 	}
 
-	
-
 	public Seed getSeed() {
 		return seed;
 	}
@@ -115,6 +111,5 @@ public class Post {
 	public void setSeed(Seed seed) {
 		this.seed = seed;
 	}
-
 
 }

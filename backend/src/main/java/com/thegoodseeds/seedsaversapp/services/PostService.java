@@ -13,9 +13,11 @@ import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDto;
 import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDto;
 import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
+import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
+import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.exceptions.PostOwnerException;
 import com.thegoodseeds.seedsaversapp.services.exceptions.ResourceNotFoundException;
@@ -31,6 +33,9 @@ public class PostService {
 
 	@Autowired
 	private CommentRepository commentRepo;
+
+	@Autowired
+	private SeedRepository seedRepo;
 
 	public List<PostResponseDto> findAll() {
 
@@ -48,20 +53,24 @@ public class PostService {
 		return new PostResponseDto(post);
 	}
 
-	public PostResponseDto insert(PostRequestDto obj) {
+	public PostResponseDto insert(PostRequestDto obj, Principal principal) {
 
 		Post post = new Post();
-
 		setAttributes(post, obj);
-
-		User user = userRepo.findById(1L).get();
-
+		User user = returnUser(principal.getName());
 		post.setUser(user);
 
 		post = postRepo.save(post);
 
-		user.addPost(post);
+		Seed seed = seedRepo.findById(obj.getSeedIdDto().getId()).get();
 
+		seed.setPost(post);
+		seed = seedRepo.save(seed);
+
+		post.setSeed(seed);
+		post = postRepo.save(post);
+
+		user.addPost(post);
 		userRepo.save(user);
 
 		return new PostResponseDto(post);
@@ -91,7 +100,7 @@ public class PostService {
 
 		Post post = returnPostDataBase(id);
 
-		String emailUserLogged = user.getName(); // esse getName retorna o email do Usuário logado.
+		String emailUserLogged = user.getName(); // This getName returns email from logged user.
 
 		String ownerEmail = post.getUser().getUsername();
 
@@ -108,7 +117,7 @@ public class PostService {
 		return "Post: " + id + " deleted!";
 	}
 
-	public PostResponseDto commentingPost(Long id, CommentRequestDto obj) {
+	public PostResponseDto commentingPost(Long id, CommentRequestDto obj, Principal principal) {
 
 		Post post = returnPostDataBase(id);
 
@@ -117,9 +126,7 @@ public class PostService {
 		comment.setCommentMessage(obj.getMessage());
 		comment.setPost(post);
 
-		User user = new User();
-		user.setName("João");
-		user.setProfileImg("fotinha.com.br");
+		User user = returnUser(principal.getName());
 
 		userRepo.save(user);
 
@@ -135,6 +142,10 @@ public class PostService {
 		post = postRepo.save(post);
 
 		return new PostResponseDto(post);
+	}
+
+	private User returnUser(String email) {
+		return userRepo.findByEmail(email).get();
 	}
 
 	private void setAttributes(Post post, PostRequestDto obj) {
