@@ -16,40 +16,37 @@ import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
 @Entity
 @Table(name = "tb_seed")
 public class Seed {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	   private Long seedId;
-	   private String popularName;
-	   private String scientificName;
-	   private String familyName;
-	   private String seedDescription;
-	   private String seedImg;
-	   private String locationOfCollection;
-	   private LocalDate dateOfCollection;
-	   
-	   private Integer typeOfStorage;
-	   
-	   @ManyToOne
-	   private User user;
-	   
-	   @OneToOne(mappedBy = "seed", cascade = CascadeType.ALL)
-	   private Post post;
-	   
-	   
-	   public Seed() {	
-		   
-	   }
 
-	public Seed(Long seedId, String popularName, String scientificName, String familyName, TypeOfStorage typeOfStorage,
-			String seedDescription, String seedImg, String locationOfCollection,
-	   LocalDate dateOfCollection) {
-		
-		this.seedId = seedId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long seedId;
+	private String popularName;
+	private String scientificName;
+	private String familyName;
+	private String seedDescription;
+	private String seedImg;
+	private String locationOfCollection;
+	private LocalDate dateOfCollection;
+
+	private Integer typeOfStorage;
+
+	@ManyToOne
+	private User user;
+
+	@OneToOne(mappedBy = "seed", cascade = CascadeType.ALL)
+	private Post post;
+
+	public Seed() {
+
+	}
+
+	public Seed(String popularName, String scientificName, String familyName, TypeOfStorage typeOfStorage,
+			String seedDescription, String seedImg, String locationOfCollection, LocalDate dateOfCollection) {
+
 		this.popularName = popularName;
 		this.scientificName = scientificName;
 		this.familyName = familyName;
-		setTypeOfStorage(typeOfStorage); 
+		setTypeOfStorage(typeOfStorage);
 		this.seedDescription = seedDescription;
 		this.seedImg = seedImg;
 		this.locationOfCollection = locationOfCollection;
@@ -113,8 +110,6 @@ public class Seed {
 	public void setSeedImg(String seedImg) {
 		this.seedImg = seedImg;
 	}
-	
-	
 
 	public String getLocationOfCollection() {
 		return locationOfCollection;
@@ -131,8 +126,7 @@ public class Seed {
 	public void setDateOfCollection(LocalDate dateOfCollection) {
 		this.dateOfCollection = dateOfCollection;
 	}
-	
-	
+
 	public User getUser() {
 		return user;
 	}
@@ -141,12 +135,19 @@ public class Seed {
 		this.user = user;
 	}
 
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
 	@Override
 	public String toString() {
 		return "Seed [seedId=" + seedId + ", popularName=" + popularName + ", scientificName=" + scientificName
 				+ ", familyName=" + familyName + ", seedDescription=" + seedDescription + ", seedImg=" + seedImg
 				+ ", typeOfStorage=" + typeOfStorage + "]";
 	}
-	   
-	   
+
 }

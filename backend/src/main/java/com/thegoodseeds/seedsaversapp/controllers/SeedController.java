@@ -22,49 +22,42 @@ import com.thegoodseeds.seedsaversapp.services.SeedService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
 @RestController
 @RequestMapping(value = "/seed")
 public class SeedController {
 
 	@Autowired
 	private SeedService seedService;
-	
 
 	@PostMapping
 	@Operation(summary = "Insert seed in the System.")
-	public ResponseEntity<SeedResponseDto> insert(@RequestBody @Valid SeedRequestDto obj , UriComponentsBuilder uriBuilder , Principal user) {
-		
-		System.out.println(obj);
-		
-		
-		SeedResponseDto seedDto = seedService.insert(obj,user);
-		
-		
-	
+	public ResponseEntity<SeedResponseDto> insert(@RequestBody @Valid SeedRequestDto obj,
+			UriComponentsBuilder uriBuilder, Principal user) {
+
+		SeedResponseDto seedDto = seedService.insert(obj, user);
+
 		URI uri = uriBuilder.path("/seed/{id}").buildAndExpand(seedDto.getId()).toUri();
-		
-		
+
 		return ResponseEntity.created(uri).body(seedDto);
 	}
-	
+
 	@PutMapping("/{id}")
 	@Operation(summary = "Edit seed in the System.")
-	public ResponseEntity<SeedResponseDto> update (@RequestBody SeedRequestDto obj, @PathVariable Long id, Principal principal) {
-		
-		SeedResponseDto dto = seedService.update(obj,id,principal);
-		
+	public ResponseEntity<SeedResponseDto> update(@RequestBody SeedRequestDto obj, @PathVariable Long id,
+			Principal principal) {
+
+		SeedResponseDto dto = seedService.update(obj, id, principal);
+
 		return ResponseEntity.ok().body(dto);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete seed in the System.")
-	public ResponseEntity<String> delete (@PathVariable Long id, Principal principal) {
-		
-		String msg = seedService.delete(id,principal);
-		
+	public ResponseEntity<String> delete(@PathVariable Long id, Principal principal) {
+
+		String msg = seedService.delete(id, principal);
+
 		return ResponseEntity.ok().body(msg);
 	}
-	
 
 }
