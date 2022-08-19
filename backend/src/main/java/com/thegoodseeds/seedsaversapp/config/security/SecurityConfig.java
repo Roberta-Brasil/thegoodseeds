@@ -53,7 +53,7 @@ public class SecurityConfig {
       .authorizeRequests()
       .antMatchers("/auth").permitAll()
       .antMatchers("/registration").permitAll()
-      //.antMatchers("/**").authenticated() // (ARRUMAR MÉTODO, ESTÁ BLOQUEANDO O SWAGGER). !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      .anyRequest().authenticated() 
       .and().csrf().disable()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // It says the application is stateless, it does not store login information!
       .and().addFilterBefore(new AuthenticationJWTFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class); // Adding filter, Antes
