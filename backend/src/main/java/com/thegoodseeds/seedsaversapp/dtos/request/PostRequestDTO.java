@@ -3,7 +3,7 @@ package com.thegoodseeds.seedsaversapp.dtos.request;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
-public class PostRequestDto {
+public class PostRequestDTO {
 	
 	@NotBlank
     private String title;
@@ -12,13 +12,13 @@ public class PostRequestDto {
     private String postMessage;
 	
 	@Valid
-	private SeedIdRequestDto seedIdDto;
+	private SeedIdRequestDTO seedIdDto;
     
-    public PostRequestDto() {
+    public PostRequestDTO() {
     	
     }
 
-	public PostRequestDto(@NotBlank String title, @NotBlank String postMessage, @Valid SeedIdRequestDto seedIdDto) {
+	public PostRequestDTO(@NotBlank String title, @NotBlank String postMessage, @Valid SeedIdRequestDTO seedIdDto) {
 		this.title = title;
 		this.postMessage = postMessage;
 		this.seedIdDto = seedIdDto;
@@ -40,11 +40,11 @@ public class PostRequestDto {
 		this.postMessage = postMessage;
 	}
 
-	public SeedIdRequestDto getSeedIdDto() {
+	public SeedIdRequestDTO getSeedIdDto() {
 		return seedIdDto;
 	}
 
-	public void setSeedIdDto(SeedIdRequestDto seedIdDto) {
+	public void setSeedIdDto(SeedIdRequestDTO seedIdDto) {
 		this.seedIdDto = seedIdDto;
 	}
     

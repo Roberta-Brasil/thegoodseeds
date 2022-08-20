@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.SeedRequestDto;
-import com.thegoodseeds.seedsaversapp.dtos.response.SeedResponseDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.SeedRequestDTO;
+import com.thegoodseeds.seedsaversapp.dtos.response.SeedResponseDTO;
 import com.thegoodseeds.seedsaversapp.services.SeedService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,10 +31,10 @@ public class SeedController {
 
 	@PostMapping
 	@Operation(summary = "Insert seed in the System.")
-	public ResponseEntity<SeedResponseDto> insert(@RequestBody @Valid SeedRequestDto obj,
-			UriComponentsBuilder uriBuilder, Principal user) {
+	public ResponseEntity<SeedResponseDTO> insert(@RequestBody @Valid SeedRequestDTO seedDTO,
+			UriComponentsBuilder uriBuilder, Principal principal) {
 
-		SeedResponseDto seedDto = seedService.insert(obj, user);
+		SeedResponseDTO seedDto = seedService.insert(seedDTO, principal);
 
 		URI uri = uriBuilder.path("/seed/{id}").buildAndExpand(seedDto.getId()).toUri();
 
@@ -42,11 +42,11 @@ public class SeedController {
 	}
 
 	@PutMapping("/{id}")
-	@Operation(summary = "Edit seed in the System.")
-	public ResponseEntity<SeedResponseDto> update(@RequestBody SeedRequestDto obj, @PathVariable Long id,
+	@Operation(summary = "Update seed in the System.")
+	public ResponseEntity<SeedResponseDTO> update(@RequestBody SeedRequestDTO seedDTO, @PathVariable Long id,
 			Principal principal) {
 
-		SeedResponseDto dto = seedService.update(obj, id, principal);
+		SeedResponseDTO dto = seedService.update(seedDTO, id, principal);
 
 		return ResponseEntity.ok().body(dto);
 	}

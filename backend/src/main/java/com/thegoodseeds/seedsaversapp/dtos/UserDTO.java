@@ -2,10 +2,12 @@ package com.thegoodseeds.seedsaversapp.dtos;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thegoodseeds.seedsaversapp.entities.User;
 
-public class UserDto {
+public class UserDTO {
 
 	private String name;
 
@@ -21,12 +23,15 @@ public class UserDto {
 	// ---------------------------------//
 	private LocalDateTime creationDate;
 	private LocalDateTime changeDate;
+	
+//	@Column(name = "reset_password_token")
+//    private String resetPasswordToken;
 
-	public UserDto() {
+	public UserDTO() {
 
 	}
 
-	public UserDto(User user) {
+	public UserDTO(User user) {
 		this.name = user.getName();
 		this.email = user.getEmail();
 		this.fullName = user.getFullName();
@@ -36,7 +41,7 @@ public class UserDto {
 		this.changeDate = user.getChangeDate();
 	}
 
-	public UserDto(String name, String password, String email, String fullName, String userAddress, String profileImg,
+	public UserDTO(String name, String password, String email, String fullName, String userAddress, String profileImg,
 			String phoneNumber, LocalDateTime creationDate, LocalDateTime changeDate) {
 		this.name = name;
 		this.password = password;
@@ -112,5 +117,15 @@ public class UserDto {
 	public void setChangeDate(LocalDateTime changeDate) {
 		this.changeDate = changeDate;
 	}
+
+//	public String getResetPasswordToken() {
+//		return resetPasswordToken;
+//	}
+//
+//	public void setResetPasswordToken(String resetPasswordToken) {
+//		this.resetPasswordToken = resetPasswordToken;
+//	}
+	
+	
 
 }

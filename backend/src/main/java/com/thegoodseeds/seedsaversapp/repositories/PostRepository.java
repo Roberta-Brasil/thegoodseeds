@@ -8,4 +8,9 @@ import com.thegoodseeds.seedsaversapp.entities.Post;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+  //Paulo public Optional<List>post;
+//	
+//	@Query(value = "SELECT * FROM tb_posts p WHERE p.title LIKE '%Gratitude%'", nativeQuery = true)
+//	List<Post> findAllPost(@Param("param") String param);
+	
 }

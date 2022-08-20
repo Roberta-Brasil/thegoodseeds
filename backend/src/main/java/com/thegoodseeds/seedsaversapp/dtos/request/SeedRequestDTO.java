@@ -2,7 +2,7 @@ package com.thegoodseeds.seedsaversapp.dtos.request;
 
 import javax.validation.constraints.NotBlank;
 
-public class SeedRequestDto {
+public class SeedRequestDTO {
 
 	@NotBlank
 	private String popularName;
@@ -25,11 +25,11 @@ public class SeedRequestDto {
 	@NotBlank
 	private String dateOfCollection;
 
-	public SeedRequestDto() {
+	public SeedRequestDTO() {
 
 	}
 
-	public SeedRequestDto(@NotBlank String popularName, String scientificName, String familyName,
+	public SeedRequestDTO(@NotBlank String popularName, String scientificName, String familyName,
 			@NotBlank String seedDescription, @NotBlank String seedImg, @NotBlank Integer typeOfStorage) {
 		this.popularName = popularName;
 		this.scientificName = scientificName;

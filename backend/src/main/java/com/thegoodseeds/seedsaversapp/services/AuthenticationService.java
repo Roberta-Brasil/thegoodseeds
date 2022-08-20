@@ -10,7 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.LoginFormRequestDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.LoginFormRequestDTO;
 import com.thegoodseeds.seedsaversapp.services.exceptions.DataBaseException;
 
 import org.springframework.security.core.AuthenticationException;
@@ -23,7 +23,7 @@ public class AuthenticationService {
     private TokenService tokenService;
 
 
-    public String authenticate(LoginFormRequestDto form, AuthenticationManager authManager) { // Método para fazer o login e se autenticar no sistema.
+    public String authenticate(LoginFormRequestDTO form, AuthenticationManager authManager) { // Método para fazer o login e se autenticar no sistema.
 
         UsernamePasswordAuthenticationToken loginData = form.toConvert();   // converter os dados passado pelo usuario em um token de autenticação
         

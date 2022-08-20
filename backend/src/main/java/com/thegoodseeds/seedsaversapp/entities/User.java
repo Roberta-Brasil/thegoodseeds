@@ -41,6 +41,9 @@ public class User implements UserDetails, Serializable {
 	private LocalDateTime creationDate;
 	private LocalDateTime changeDate;
 	private String phoneNumber;
+	
+//	@Column(name = "reset_password_token")
+//    private String resetPasswordToken;
 
 	@OneToMany(mappedBy = "user")
 	private List<Post> posts = new ArrayList<>();
@@ -244,6 +247,15 @@ public class User implements UserDetails, Serializable {
 	public String getPassword() {
 		return this.password;
 	}
+	
+	
+//	public String getResetPasswordToken() {
+//		return resetPasswordToken;
+//	}
+//
+//	public void setResetPasswordToken(String resetPasswordToken) {
+//		this.resetPasswordToken = resetPasswordToken;
+//	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

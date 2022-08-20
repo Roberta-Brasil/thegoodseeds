@@ -2,7 +2,6 @@ package com.thegoodseeds.seedsaversapp.services;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,121 +10,110 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.thegoodseeds.seedsaversapp.dtos.UserDto;
-import com.thegoodseeds.seedsaversapp.dtos.response.SeedResponseDto;
+import com.thegoodseeds.seedsaversapp.dtos.UserDTO;
+import com.thegoodseeds.seedsaversapp.dtos.response.SeedResponseDTO;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
+import com.thegoodseeds.seedsaversapp.services.businessRules.updateUser.UpdateUserValidation;
 import com.thegoodseeds.seedsaversapp.services.exceptions.ResourceNotFoundException;
+
+// This class implements the user's methods for each system function.
 
 @Service
 public class UserService implements UserDetailsService {
 
-//	@Autowired
-//	private PostRepository postRepo;
-
 	@Autowired
 	private UserRepository userRepo;
 
-//	@Autowired
-//	private CommentRepository commentRepo;
+	@Autowired
+	private List<UpdateUserValidation> validations;
 
+	// This methods shows the spring security how the authentication will be made
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // Método que mostra pro
-																								// spring security como
-																								// será feita a
-																								// autenticação.
-		Optional<User> user = userRepo.findByEmail(username);
-		return user.get();
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		User user = returnUser(username);
+		
+		return user;
+	}
+
+	// This method returns the profile info of the logged user
+	public UserDTO myProfile(Principal principal) {
+
+		String email = principal.getName();
+
+		User user = returnUser(email);
+
+		return new UserDTO(user);
 	}
 
 	// This method returns all seeds added by user
-	public List<SeedResponseDto> findAllSeedsByUser(Principal userPrincipal) {
+	public List<SeedResponseDTO> findAllSeedsByUser(Principal principal) {
 
-		String email = userPrincipal.getName();
-
-		User user = returnUser(email);
+		User user = returnUser(principal.getName());
 
 		List<Seed> seeds = user.getSeeds();
 
-		List<SeedResponseDto> seedsDto = seeds.stream().map(SeedResponseDto::new).collect(Collectors.toList());
+		List<SeedResponseDTO> seedsDTO = seeds.stream().map(SeedResponseDTO::new).collect(Collectors.toList());
 
-		return seedsDto;
+		return seedsDTO;
 	}
 
-	public UserDto myProfile(Principal userPrincipal) {
+	// This method returns the seeds by id to the logged user
+	public SeedResponseDTO findSeedByIdByUser(Principal principal, Long id) {
 
-		String email = userPrincipal.getName();
+		User user = returnUser(principal.getName());
+			
+		Seed seed = returnSeed(user,id);
 
-		User user = returnUser(email);
-
-		return new UserDto(user);
+		return new SeedResponseDTO(seed);
 	}
 
-	public SeedResponseDto findSeedByIdByUser(Principal principal, Long id) {
+	// this method update the user profile
+
+	public UserDTO update(Principal principal, UserDTO userDTO) {
 
 		User user = returnUser(principal.getName());
 
-		Seed seedVar = null;
-
-		for (Seed seed : user.getSeeds()) {
-
-			if (seed.getSeedId() == id) {
-				seedVar = seed;
-			}
-		}
-
-		if (seedVar == null) {
-			throw new ResourceNotFoundException(
-					"Seed id : " + id + " wasn't found or this seed doesn't belong to this user");
-		}
-
-		return new SeedResponseDto(seedVar);
-	}
-
-	public UserDto update(UserDto userDto, Principal principal) {
-
-		User user = returnUser(principal.getName());
-
-		setAttributes(user, userDto);
+		setAttributes(user, userDTO);
 
 		user = userRepo.save(user);
 
-		return new UserDto(user);
+		return new UserDTO(user);
 	}
 
-	private void setAttributes(User user, UserDto userDto) {
+	// this method returns user by email
+	private User returnUser(String email) {
+		return userRepo.findByEmail(email).get();
+	}
+	
+	private Seed returnSeed(User user, Long id) { // !!!!!!!!!!! Perguntar Paulo como retornar isso diretamente do banco.
+		
+		Seed seed = null;
 
-		if (userDto.getProfileImg() != null) {
-			user.setProfileImg(userDto.getProfileImg());
+		for (Seed s : user.getSeeds()) {
+
+			if (s.getSeedId() == id) {
+				seed = s;
+			}
 		}
 
-		if (userDto.getPhoneNumber() != null) {
-			user.setPhoneNumber(userDto.getPhoneNumber());
+		if (seed == null) {
+			throw new ResourceNotFoundException(
+					"Seed id : " + id + " was not found or this seed does not belong to this user");
 		}
+		
+		return seed;
+	}
 
-		if (userDto.getEmail() != null) {
-			user.setEmail(userDto.getEmail());
-		}
+	// this method set the user profile information
+	private void setAttributes(User user, UserDTO userDTO) {
 
-		if (userDto.getName() != null) {
-			user.setName(userDto.getName());
-		}
-
-		if (userDto.getPassword() != null) {
-			user.setPassword(userDto.getPassword());
-		}
-
-		if (userDto.getFullName() != null) {
-			user.setFullName(userDto.getFullName());
-		}
+		validations.forEach(v -> v.validation(user, userDTO));
 
 		user.setChangeDate();
 
-	}
-
-	private User returnUser(String email) {
-		return userRepo.findByEmail(email).get();
 	}
 
 }

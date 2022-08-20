@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDto;
-import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDto;
-import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDTO;
+import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDTO;
+import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDTO;
 import com.thegoodseeds.seedsaversapp.services.PostService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping(value = "/post")
+@RequestMapping(value = "/posts")
 public class PostController {
 
 	@Autowired
@@ -34,28 +34,28 @@ public class PostController {
 
 	@GetMapping
 	@Operation(summary = "Find all posts in the System.")
-	public ResponseEntity<List<PostResponseDto>> findAll() {
+	public ResponseEntity<List<PostResponseDTO>> findAll() {
 
-		List<PostResponseDto> postsDto = postService.findAll();
+		List<PostResponseDTO> postsDto = postService.findAll();
 
 		return ResponseEntity.ok().body(postsDto);
 	}
 
 	@GetMapping(value = "/{id}")
 	@Operation(summary = "Find a specific post in the System by id")
-	public ResponseEntity<PostResponseDto> findById(@PathVariable Long id) {
+	public ResponseEntity<PostResponseDTO> findById(@PathVariable Long id) {
 
-		PostResponseDto postDto = postService.findById(id);
+		PostResponseDTO postDto = postService.findById(id);
 
 		return ResponseEntity.ok().body(postDto);
 	}
 
 	@PostMapping
 	@Operation(summary = "Insert a post in the system.")
-	public ResponseEntity<PostResponseDto> insert(@RequestBody @Valid PostRequestDto obj, Principal principal,
+	public ResponseEntity<PostResponseDTO> insert(@RequestBody @Valid PostRequestDTO postDTO, Principal principal,
 			UriComponentsBuilder uriBuilder) {
 
-		PostResponseDto postDto = postService.insert(obj, principal);
+		PostResponseDTO postDto = postService.insert(postDTO, principal);
 
 		URI uri = uriBuilder.path("/post/{id}").buildAndExpand(postDto.getId()).toUri();
 
@@ -64,31 +64,37 @@ public class PostController {
 
 	@PutMapping("/{id}")
 	@Operation(summary = "Update post in the system.")
-	public ResponseEntity<PostResponseDto> update(@PathVariable Long id, @RequestBody PostRequestDto obj,
-			Principal user) {
+	public ResponseEntity<PostResponseDTO> update(@PathVariable Long id, @RequestBody PostRequestDTO postDTO,
+			Principal principal) {
 
-		PostResponseDto postDto = postService.update(id, obj, user);
+		PostResponseDTO postDto = postService.update(id, postDTO, principal);
 
 		return ResponseEntity.ok().body(postDto);
 	}
 
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete a post in the system.")
-	public ResponseEntity<String> delete(@PathVariable Long id, Principal user) {
+	public ResponseEntity<String> delete(@PathVariable Long id, Principal principal) {
 
-		String message = postService.delete(id, user);
+		String message = postService.delete(id, principal);
 
 		return ResponseEntity.ok().body(message);
 	}
 
 	@PutMapping("/{id}/comment")
 	@Operation(summary = "Create a new comment on the post (adding a comment).")
-	public ResponseEntity<PostResponseDto> commentingPost(@PathVariable Long id, @RequestBody CommentRequestDto obj,
-			Principal principal) {
+	public ResponseEntity<PostResponseDTO> commentingPost(@PathVariable Long id,
+			@RequestBody CommentRequestDTO commentDTO, Principal principal) {
 
-		PostResponseDto postDto = postService.commentingPost(id, obj, principal);
+		PostResponseDTO postDto = postService.commentingPost(id, commentDTO, principal);
 
 		return ResponseEntity.ok().body(postDto);
 	}
+// Paulo	
+//	@GetMapping("/filter/{param}")
+//    public List<Post> filterResquestPost(@PathVariable String param ){
+//		System.out.println(param);
+//		return postService.filter(param); 
 
+//    }
 }

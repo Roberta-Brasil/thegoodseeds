@@ -3,17 +3,17 @@ package com.thegoodseeds.seedsaversapp.dtos.request;
 
 import javax.validation.constraints.NotEmpty;
 
-public class SeedIdRequestDto {
+public class SeedIdRequestDTO {
 
 	@NotEmpty
 	private Long id;
 	
-	public SeedIdRequestDto() {
+	public SeedIdRequestDTO() {
 		
 	}
 	
 	
-	public SeedIdRequestDto(@NotEmpty Long id) {
+	public SeedIdRequestDTO(@NotEmpty Long id) {
 		this.id = id;
 	}
 

@@ -33,6 +33,8 @@ public class Seed {
 	@ManyToOne
 	private User user;
 
+//	@Transient()
+//	@JsonIgnore()
 	@OneToOne(mappedBy = "seed", cascade = CascadeType.ALL)
 	private Post post;
 

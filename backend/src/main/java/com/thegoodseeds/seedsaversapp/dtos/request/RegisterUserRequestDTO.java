@@ -1,16 +1,16 @@
 package com.thegoodseeds.seedsaversapp.dtos.request;
 
-public class RegisterUserRequestDto {
+public class RegisterUserRequestDTO {
 	
 	private String userName;
 	private String password;
 	private String email;
 	
-	public RegisterUserRequestDto() {
+	public RegisterUserRequestDTO() {
 		
 	}
 
-	public RegisterUserRequestDto(String userName, String password, String email) {
+	public RegisterUserRequestDTO(String userName, String password, String email) {
 		this.userName = userName;
 		this.password = password;
 		this.email = email;

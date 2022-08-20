@@ -2,14 +2,14 @@ package com.thegoodseeds.seedsaversapp.dtos.response;
 
 import com.thegoodseeds.seedsaversapp.entities.User;
 
-public class UserResponseDto {
+public class UserResponseDTO {
 
 	private String email;
 	private String profileImg;
 
 	// Colocar mais atributos
 
-	public UserResponseDto(User user) {
+	public UserResponseDTO(User user) {
 		this.email = user.getUsername();
 		this.profileImg = user.getProfileImg();
 	}

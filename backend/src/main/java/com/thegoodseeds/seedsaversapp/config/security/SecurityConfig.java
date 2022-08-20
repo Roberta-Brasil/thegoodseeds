@@ -48,12 +48,16 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.cors().and().csrf().disable();
+		http.headers().frameOptions().disable();
 
 		http
       .authorizeRequests()
       .antMatchers("/auth").permitAll()
       .antMatchers("/registration").permitAll()
-      .anyRequest().authenticated() 
+      .antMatchers("/users/**").authenticated()
+      .antMatchers("/seeds/**").authenticated()
+      .antMatchers("/posts/**").authenticated()
       .and().csrf().disable()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // It says the application is stateless, it does not store login information!
       .and().addFilterBefore(new AuthenticationJWTFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class); // Adding filter, Antes
@@ -62,11 +66,10 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**",
-				"/swagger-resources/**", "/h2-console/**");
-	}
+	 @Bean
+	 WebSecurityCustomizer webSecurityCustomizer() {
+	        return (web) -> web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**", "/h2-console/**");
+	    }
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {

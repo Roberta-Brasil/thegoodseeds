@@ -1,15 +1,15 @@
 package com.thegoodseeds.seedsaversapp.dtos.response;
 
-public class TokenDto {
+public class TokenDTO {
 	
 	private String token;
     private String type;
     
-    public TokenDto() {
+    public TokenDTO() {
     	
     }
 
-    public TokenDto(String token, String type) {
+    public TokenDTO(String token, String type) {
         this.token = token;
         this.type = type;
     }

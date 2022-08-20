@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDTO;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
@@ -22,7 +22,7 @@ public class RegistrationService {
 	@Autowired
 	private PasswordEncoder encoder;
 
-	public User register(RegisterUserRequestDto userDto) {
+	public User register(RegisterUserRequestDTO userDto) {
 
 		String email = userDto.getEmail();
 
@@ -44,7 +44,7 @@ public class RegistrationService {
 		}
 	}
 
-	private User createUser(RegisterUserRequestDto userDto) {
+	private User createUser(RegisterUserRequestDTO userDto) {
 
 		String password = userDto.getPassword();
 

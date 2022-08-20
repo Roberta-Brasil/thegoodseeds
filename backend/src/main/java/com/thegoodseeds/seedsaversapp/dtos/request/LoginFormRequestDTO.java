@@ -2,7 +2,7 @@ package com.thegoodseeds.seedsaversapp.dtos.request;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-public class LoginFormRequestDto {
+public class LoginFormRequestDTO {
 	
 	private String email;
 

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
 
-public class PostResponseDto {
+public class PostResponseDTO {
 
 	private Long postId;
 	private int likesQuantity;
@@ -20,13 +20,13 @@ public class PostResponseDto {
 	@JsonIgnore
 	private Long id;
 
-	private UserResponseDto user;
+	private UserResponseDTO user;
 
-	private SeedResponseDto seed;
+	private SeedResponseDTO seed;
 
-	private List<CommentResponseDto> comments = new ArrayList<>();
+	private List<CommentResponseDTO> comments = new ArrayList<>();
 
-	public PostResponseDto(Post post) {
+	public PostResponseDTO(Post post) {
 
 		this.postId = post.getPostId();
 		this.likesQuantity = post.getLikesQuantity();
@@ -34,14 +34,14 @@ public class PostResponseDto {
 		this.postMessage = post.getPostMessage();
 		this.createdTime = LocalDateTime.now();
 		this.id = post.getPostId();
-		this.user = new UserResponseDto(post.getUser());
-		this.seed = new SeedResponseDto(post.getSeed());
+		this.user = new UserResponseDTO(post.getUser());
+		this.seed = new SeedResponseDTO(post.getSeed());
 		this.comments = convertList(post.getComments());
 	}
 
-	private List<CommentResponseDto> convertList(List<Comment> comments) {
+	private List<CommentResponseDTO> convertList(List<Comment> comments) {
 
-		List<CommentResponseDto> commentsDto = comments.stream().map(CommentResponseDto::new)
+		List<CommentResponseDTO> commentsDto = comments.stream().map(CommentResponseDTO::new)
 				.collect(Collectors.toList());
 
 		return commentsDto;
@@ -51,7 +51,7 @@ public class PostResponseDto {
 		return createdTime;
 	}
 
-	public List<CommentResponseDto> getComments() {
+	public List<CommentResponseDTO> getComments() {
 		return comments;
 	}
 
@@ -87,11 +87,11 @@ public class PostResponseDto {
 		this.id = id;
 	}
 
-	public UserResponseDto getUser() {
+	public UserResponseDTO getUser() {
 		return user;
 	}
 
-	public void setUser(UserResponseDto user) {
+	public void setUser(UserResponseDTO user) {
 		this.user = user;
 	}
 
@@ -103,11 +103,11 @@ public class PostResponseDto {
 		this.postId = postId;
 	}
 
-	public SeedResponseDto getSeed() {
+	public SeedResponseDTO getSeed() {
 		return seed;
 	}
 
-	public void setSeed(SeedResponseDto seed) {
+	public void setSeed(SeedResponseDTO seed) {
 		this.seed = seed;
 	}
 

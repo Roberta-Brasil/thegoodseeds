@@ -1,15 +1,15 @@
 package com.thegoodseeds.seedsaversapp.dtos.request;
 
 
-public class CommentRequestDto {
+public class CommentRequestDTO {
 	
     private String message;
     
-   public CommentRequestDto() {
+   public CommentRequestDTO() {
 	   
    }
     
-	public CommentRequestDto(String message) {
+	public CommentRequestDTO(String message) {
 		this.message = message;
 	}
 

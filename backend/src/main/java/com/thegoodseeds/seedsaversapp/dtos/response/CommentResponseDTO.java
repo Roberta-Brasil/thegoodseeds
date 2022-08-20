@@ -4,19 +4,19 @@ import java.time.LocalDateTime;
 
 import com.thegoodseeds.seedsaversapp.entities.Comment;
 
-public class CommentResponseDto {
+public class CommentResponseDTO {
 
 	private String commentMessage;
 	private LocalDateTime createdtime;
-	private UserResponseDto user;
+	private UserResponseDTO user;
 
-	public CommentResponseDto(Comment comment) {
+	public CommentResponseDTO(Comment comment) {
 		this.commentMessage = comment.getCommentMessage();
 		this.createdtime = comment.getCreatedtime();
-		this.user = new UserResponseDto(comment.getUser());
+		this.user = new UserResponseDTO(comment.getUser());
 	}
 
-	public CommentResponseDto(javax.xml.stream.events.Comment comment) {
+	public CommentResponseDTO(javax.xml.stream.events.Comment comment) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -36,11 +36,11 @@ public class CommentResponseDto {
 		this.createdtime = createdtime;
 	}
 
-	public UserResponseDto getUser() {
+	public UserResponseDTO getUser() {
 		return user;
 	}
 
-	public void setUser(UserResponseDto user) {
+	public void setUser(UserResponseDTO user) {
 		this.user = user;
 	}
 

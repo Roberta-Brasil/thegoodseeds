@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDto;
-import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDto;
-import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDTO;
+import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDTO;
+import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDTO;
 import com.thegoodseeds.seedsaversapp.entities.Comment;
 import com.thegoodseeds.seedsaversapp.entities.Post;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
@@ -37,32 +37,32 @@ public class PostService {
 	@Autowired
 	private SeedRepository seedRepo;
 
-	public List<PostResponseDto> findAll() {
+	public List<PostResponseDTO> findAll() {
 
 		List<Post> posts = postRepo.findAll();
 
-		List<PostResponseDto> postsDto = posts.stream().map(PostResponseDto::new).collect(Collectors.toList());
+		List<PostResponseDTO> postsDto = posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
 
 		return postsDto;
 	}
 
-	public PostResponseDto findById(Long id) {
+	public PostResponseDTO findById(Long id) {
 
 		Post post = returnPostDataBase(id);
 
-		return new PostResponseDto(post);
+		return new PostResponseDTO(post);
 	}
-
-	public PostResponseDto insert(PostRequestDto obj, Principal principal) {
+	//This method allows the user to add a post
+	public PostResponseDTO insert(PostRequestDTO postDTO, Principal principal) {
 
 		Post post = new Post();
-		setAttributes(post, obj);
+		setAttributes(post, postDTO);
 		User user = returnUser(principal.getName());
 		post.setUser(user);
 
 		post = postRepo.save(post);
 
-		Seed seed = seedRepo.findById(obj.getSeedIdDto().getId()).get();
+		Seed seed = seedRepo.findById(postDTO.getSeedIdDto().getId()).get();
 
 		seed.setPost(post);
 		seed = seedRepo.save(seed);
@@ -73,15 +73,15 @@ public class PostService {
 		user.addPost(post);
 		userRepo.save(user);
 
-		return new PostResponseDto(post);
+		return new PostResponseDTO(post);
 
 	}
-
-	public PostResponseDto update(Long id, PostRequestDto obj, Principal user) {
+	//This method allows the user to update a post
+	public PostResponseDTO update(Long id, PostRequestDTO postDto, Principal principal) {
 
 		Post post = returnPostDataBase(id);
 
-		String emailUserLogged = user.getName(); // esse getName retorna o email do Usuário logado.
+		String emailUserLogged = principal.getName(); // esse getName retorna o email do Usuário logado.
 
 		String ownerEmail = post.getUser().getUsername();
 
@@ -89,18 +89,18 @@ public class PostService {
 
 		permissionValidation(emailUserLogged, ownerEmail, err);
 
-		setAttributes(post, obj);
+		setAttributes(post, postDto);
 
 		post = postRepo.save(post);
 
-		return new PostResponseDto(post);
+		return new PostResponseDTO(post);
 	}
-
-	public String delete(Long id, Principal user) {
+	//This method allows the user to delete a post
+	public String delete(Long id, Principal  principal) {
 
 		Post post = returnPostDataBase(id);
 
-		String emailUserLogged = user.getName(); // This getName returns email from logged user.
+		String emailUserLogged = principal.getName(); // This getName returns email from logged user.
 
 		String ownerEmail = post.getUser().getUsername();
 
@@ -116,14 +116,15 @@ public class PostService {
 
 		return "Post: " + id + " deleted!";
 	}
-
-	public PostResponseDto commentingPost(Long id, CommentRequestDto obj, Principal principal) {
+	//This method allows the user to comment a post
+	public PostResponseDTO commentingPost(Long id, CommentRequestDTO commentDTO, Principal principal) {
 
 		Post post = returnPostDataBase(id);
 
 		Comment comment = new Comment();
+		
 
-		comment.setCommentMessage(obj.getMessage());
+		comment.setCommentMessage(commentDTO.getMessage());
 		comment.setPost(post);
 
 		User user = returnUser(principal.getName());
@@ -141,14 +142,14 @@ public class PostService {
 
 		post = postRepo.save(post);
 
-		return new PostResponseDto(post);
+		return new PostResponseDTO(post);
 	}
 
 	private User returnUser(String email) {
 		return userRepo.findByEmail(email).get();
 	}
 
-	private void setAttributes(Post post, PostRequestDto obj) {
+	private void setAttributes(Post post, PostRequestDTO obj) {
 		post.setTitle(obj.getTitle());
 		post.setPostMessage(obj.getPostMessage());
 	}
@@ -159,6 +160,7 @@ public class PostService {
 		return post;
 	}
 
+	//This method validates the email post owner 
 	private void permissionValidation(String emailUserLogged, String ownerEmail, String msg) {
 
 		if (!emailUserLogged.equals(ownerEmail)) {
@@ -166,5 +168,15 @@ public class PostService {
 		}
 
 	}
+
+//Paulo	
+//	public List<Post> filter(String param) {
+//		// TODO Auto-generated method stub
+//		
+//		//List<Post> authors = postRepo.createQuery("SELECT a FROM Author a JOIN a.books b WHERE b.title LIKE '%Hibernate%'", Post.class).getResultList();
+//
+//		return postRepo.findAllPost(param);
+//	
+//	}
 
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDto;
+import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDTO;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.services.RegistrationService;
 
@@ -29,7 +29,7 @@ public class RegistrationController {
 	
 	@PostMapping
 	@Operation(summary = "Register an user in the System")
-	public ResponseEntity<String> register(@RequestBody RegisterUserRequestDto userDto,UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<String> register(@RequestBody RegisterUserRequestDTO userDto,UriComponentsBuilder uriBuilder) {
 		
 		User user  = registrationService.register(userDto);
 		

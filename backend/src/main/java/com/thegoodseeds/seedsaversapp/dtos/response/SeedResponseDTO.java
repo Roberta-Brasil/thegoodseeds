@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.enums.TypeOfStorage;
 
-public class SeedResponseDto {
+public class SeedResponseDTO {
 
 	private Long id;
 	private String popularName;
@@ -19,7 +19,7 @@ public class SeedResponseDto {
 	private String locationOfCollection;
 	private LocalDate dateOfCollection;
 
-	public SeedResponseDto(Seed seed) {
+	public SeedResponseDTO(Seed seed) {
 		this.popularName = seed.getPopularName();
 		this.scientificName = seed.getScientificName();
 		this.familyName = seed.getFamilyName();

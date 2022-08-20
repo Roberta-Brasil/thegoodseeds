@@ -1,7 +1,6 @@
 package com.thegoodseeds.seedsaversapp.filters;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -47,7 +46,9 @@ public class AuthenticationJWTFilter extends OncePerRequestFilter { // Filtro de
     }
 
     private String recoverToken(HttpServletRequest request) { // Método para recuperar o token
+    	
         String token = request.getHeader("Authorization");
+       
         if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
             return null;
         }
