@@ -13,7 +13,7 @@ import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
 
 @Service
-@Profile(value = { "test", "prod" })
+@Profile(value = { "test", "prod", "dev02" })
 public class RegistrationService {
 
 	@Autowired

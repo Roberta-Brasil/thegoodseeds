@@ -20,7 +20,9 @@ public class SeedResponseDTO {
 	private LocalDate dateOfCollection;
 
 	public SeedResponseDTO(Seed seed) {
-		this.popularName = seed.getPopularName();
+		System.out.println(seed.getPopularName()+"EM TESTE NÃO DÁ ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("Espero que não kakaaaaak, vamos ver");
+		this.popularName = seed.getPopularName(); // !!!!!!!!!!!!!
 		this.scientificName = seed.getScientificName();
 		this.familyName = seed.getFamilyName();
 		this.seedDescription = seed.getSeedDescription();

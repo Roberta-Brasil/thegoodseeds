@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @CrossOrigin("*")
 @RestController
 @RequestMapping(value = "/registration")
-@Profile(value = {"test","prod"})
+@Profile(value = {"test","prod", "dev02"})
 public class RegistrationController {
 	
 	@Autowired

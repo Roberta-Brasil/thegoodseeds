@@ -26,7 +26,7 @@ import com.thegoodseeds.seedsaversapp.services.TokenService;
 
 @Configuration
 @EnableWebSecurity //Deactivate the standard setting of Spring Security
-@Profile(value = { "test", "prod"})
+@Profile(value = { "test", "prod", "dev02"})
 public class SecurityConfig {
 
 	@Autowired
@@ -48,16 +48,15 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable();
-		http.headers().frameOptions().disable();
-
-		http
+	
+	http
+		
       .authorizeRequests()
       .antMatchers("/auth").permitAll()
       .antMatchers("/registration").permitAll()
-      .antMatchers("/users/**").authenticated()
-      .antMatchers("/seeds/**").authenticated()
-      .antMatchers("/posts/**").authenticated()
+      .anyRequest().authenticated()
+      .and().cors()
+      .and().headers().frameOptions().disable() // substitui aquele lá todos entendi e continuam liberados por conta do requests ?
       .and().csrf().disable()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // It says the application is stateless, it does not store login information!
       .and().addFilterBefore(new AuthenticationJWTFilter(tokenService, userRepository), UsernamePasswordAuthenticationFilter.class); // Adding filter, Antes
@@ -68,7 +67,7 @@ public class SecurityConfig {
 
 	 @Bean
 	 WebSecurityCustomizer webSecurityCustomizer() {
-	        return (web) -> web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**", "/h2-console/**");
+	        return (web) -> web.ignoring().antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**");
 	    }
 
 	@Bean

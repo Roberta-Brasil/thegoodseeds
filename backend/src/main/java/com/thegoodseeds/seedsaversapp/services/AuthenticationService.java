@@ -16,7 +16,7 @@ import com.thegoodseeds.seedsaversapp.services.exceptions.DataBaseException;
 import org.springframework.security.core.AuthenticationException;
 
 @Service
-@Profile(value = {"prod","test"})
+@Profile(value = {"prod","test","dev02"})
 public class AuthenticationService {
 	
 	@Autowired

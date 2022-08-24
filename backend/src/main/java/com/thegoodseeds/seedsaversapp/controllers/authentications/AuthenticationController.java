@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @CrossOrigin("*")
 @RestController   // Identificando  que é um rest-controller
 @RequestMapping(value = "/auth")   // Recurso para "encontrar" esse controller
-@Profile(value = {"prod","test"})
+@Profile(value = {"prod","test","dev02"})
 public class AuthenticationController {
 	
 	@Autowired

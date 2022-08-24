@@ -15,7 +15,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @Service
-@Profile(value = {"prod","test"})
+@Profile(value = {"prod","test","dev02"})
 public class TokenService {
 	
 	@Value("${jwt.expiration}")
