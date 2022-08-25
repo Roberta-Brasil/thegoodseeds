@@ -2,6 +2,7 @@ package com.thegoodseeds.seedsaversapp.services;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import com.thegoodseeds.seedsaversapp.dtos.UserDTO;
 import com.thegoodseeds.seedsaversapp.dtos.response.SeedResponseDTO;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
+import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.businessRules.updateUser.UpdateUserValidation;
 import com.thegoodseeds.seedsaversapp.services.exceptions.ResourceNotFoundException;
@@ -25,6 +27,9 @@ public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepo;
+	
+	@Autowired
+	private SeedRepository seedRepo;
 
 	@Autowired
 	private List<UpdateUserValidation> validations;
@@ -88,23 +93,17 @@ public class UserService implements UserDetailsService {
 		return userRepo.findByEmail(email).get();
 	}
 	
-	private Seed returnSeed(User user, Long id) { // !!!!!!!!!!! Perguntar Paulo como retornar isso diretamente do banco.
+	//This method returns the seed by id  user
+	private Seed returnSeed(User user, Long id) { 
 		
-		Seed seed = null;
+		Optional<Seed> seed = seedRepo.findById(id);
 
-		for (Seed s : user.getSeeds()) {
-
-			if (s.getSeedId() == id) {
-				seed = s;
-			}
-		}
-
-		if (seed == null) {
+		if( seed.isEmpty() ||!seed.get().getUser().equals(user)) {
 			throw new ResourceNotFoundException(
 					"Seed id : " + id + " was not found or this seed does not belong to this user");
 		}
 		
-		return seed;
+		return seed.get();
 	}
 
 	// this method set the user profile information

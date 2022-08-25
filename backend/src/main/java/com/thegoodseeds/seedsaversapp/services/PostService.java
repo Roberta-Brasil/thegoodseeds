@@ -1,6 +1,7 @@
 package com.thegoodseeds.seedsaversapp.services;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,21 +38,23 @@ public class PostService {
 	@Autowired
 	private SeedRepository seedRepo;
 
-	public List<PostResponseDTO> findAll() {
+	public List<PostResponseDTO> findAll(String seedPopularName) {
 
-		List<Post> posts = postRepo.findAll();
-
-		List<PostResponseDTO> postsDto = posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
-
-		return postsDto;
-	}
-
+		    List<Post> posts = checkFilterParam(seedPopularName);
+						
+			List<PostResponseDTO> postsDTO = posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+			
+			return postsDTO;
+		}
+	
+	
 	public PostResponseDTO findById(Long id) {
 
 		Post post = returnPostDataBase(id);
 
 		return new PostResponseDTO(post);
 	}
+	
 	//This method allows the user to add a post
 	public PostResponseDTO insert(PostRequestDTO postDTO, Principal principal) {
 
@@ -144,6 +147,44 @@ public class PostService {
 
 		return new PostResponseDTO(post);
 	}
+	
+	 private List<Post> checkFilterParam(String seedPopularName) {
+	    	
+	    	List<Post> posts;
+				
+			if(seedPopularName == null) {
+				posts = returnAllPosts();
+				
+			} else {
+				
+				posts = returnPostFilterByPopularName(seedPopularName);
+				
+			}
+			
+			return posts;
+	    	
+	    }
+	    
+		
+		private List<Post> returnAllPosts() {
+			return postRepo.findAll();
+		}
+		
+		private List<Post> returnPostFilterByPopularName(String seedPopularName) {
+			
+		List<Seed> seeds = seedRepo.findByPopularNameContains(seedPopularName);
+			
+         List<Post> posts = new ArrayList<>();
+			
+			for(Seed seed : seeds) {
+				Post post = seed.getPost();
+				if(post!=null) {
+					posts.add(post);
+				}
+			}
+			
+			return posts;
+		}
 
 	private User returnUser(String email) {
 		return userRepo.findByEmail(email).get();
@@ -169,14 +210,5 @@ public class PostService {
 
 	}
 
-//Paulo	
-//	public List<Post> filter(String param) {
-//		// TODO Auto-generated method stub
-//		
-//		//List<Post> authors = postRepo.createQuery("SELECT a FROM Author a JOIN a.books b WHERE b.title LIKE '%Hibernate%'", Post.class).getResultList();
-//
-//		return postRepo.findAllPost(param);
-//	
-//	}
 
 }

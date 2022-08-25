@@ -23,7 +23,7 @@ import com.thegoodseeds.seedsaversapp.services.SeedService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
-@RequestMapping(value = "/seed")
+@RequestMapping(value = "/seeds")
 public class SeedController {
 
 	@Autowired

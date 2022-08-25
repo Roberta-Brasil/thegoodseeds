@@ -1,5 +1,6 @@
 package com.thegoodseeds.seedsaversapp.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDTO;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
+import com.thegoodseeds.seedsaversapp.services.businessRules.registerUser.RegisterUserValidation;
 import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
 
 @Service
@@ -21,29 +23,25 @@ public class RegistrationService {
 
 	@Autowired
 	private PasswordEncoder encoder;
+	
+	@Autowired
+	private List<RegisterUserValidation> registerUserValidations;
+	
+	//This method registers the user
 
-	public User register(RegisterUserRequestDTO userDto) {
+	public User register(RegisterUserRequestDTO userDTO) {
 
-		String email = userDto.getEmail();
+	    registerUserValidations.forEach(v -> v.validation(userDTO, userRepo));
 
-		emailAlreadyExistsValidation(email);
-
-		User user = createUser(userDto);
+		User user = createUser(userDTO);
 
 		user = userRepo.save(user);
 
 		return user;
 	}
+    
 
-	private void emailAlreadyExistsValidation(String email) {
-
-		Optional<User> userDataBase = userRepo.findByEmail(email);
-
-		if (userDataBase.isPresent()) {
-			throw new EmailAlreadyExistsException("Email " + email + " already exists in the system");
-		}
-	}
-
+	//This method creates the user by Dto data
 	private User createUser(RegisterUserRequestDTO userDto) {
 
 		String password = userDto.getPassword();

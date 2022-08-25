@@ -28,6 +28,9 @@ public class Post {
 	private String postMessage;
 
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private List<LikesPostUser> likesUsers = new ArrayList<>();
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 
 	@ManyToOne
@@ -46,6 +49,19 @@ public class Post {
 		this.title = title;
 		this.postMessage = postMessage;
 		instanceLocalDateTime();
+	}
+
+	public Integer getLikesUsers() {
+		return likesUsers.size();
+	}
+
+	public void addLikesUsers(LikesPostUser like) {
+		this.likesUsers.add(like);
+	}
+	
+		
+	public void setLikesUsers(List<LikesPostUser> likesUsers) {
+		this.likesUsers = likesUsers;
 	}
 
 	public void addComment(Comment comment) {

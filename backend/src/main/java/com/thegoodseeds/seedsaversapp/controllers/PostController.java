@@ -2,7 +2,9 @@ package com.thegoodseeds.seedsaversapp.controllers;
 
 import java.net.URI;
 import java.security.Principal;
+
 import java.util.List;
+
 
 import javax.validation.Valid;
 
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDTO;
 import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDTO;
 import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDTO;
+
 import com.thegoodseeds.seedsaversapp.services.PostService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,12 +35,14 @@ public class PostController {
 
 	@Autowired
 	private PostService postService;
+	
+
 
 	@GetMapping
 	@Operation(summary = "Find all posts in the System.")
-	public ResponseEntity<List<PostResponseDTO>> findAll() {
+	public ResponseEntity<List<PostResponseDTO>> findAll(@RequestParam(required=false) String seedPopularName) {
 
-		List<PostResponseDTO> postsDto = postService.findAll();
+		List<PostResponseDTO> postsDto = postService.findAll(seedPopularName);
 
 		return ResponseEntity.ok().body(postsDto);
 	}
@@ -90,11 +96,5 @@ public class PostController {
 
 		return ResponseEntity.ok().body(postDto);
 	}
-// Paulo	
-//	@GetMapping("/filter/{param}")
-//    public List<Post> filterResquestPost(@PathVariable String param ){
-//		System.out.println(param);
-//		return postService.filter(param); 
-
-//    }
+	
 }

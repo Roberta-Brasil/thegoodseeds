@@ -43,19 +43,10 @@ public class SeedService {
 
 		User user = returnUser(email);
 
-		Seed seed = new Seed();
-
-		setAttributes(seed, seedDTO);
-
-		seed.setUser(user);
-
-		seedRepo.save(seed);
-
-		seed = seedRepo.save(seed);
-
-		user.addSeed(seed);
+		Seed seed = createSeedAndSetAttributes(seedDTO,user);
 
 		userRepo.save(user);
+		seed = seedRepo.save(seed);
 
 		return new SeedResponseDTO(seed);
 	}
@@ -93,51 +84,7 @@ public class SeedService {
 
 		return "Seed " + popularName + "was deleted successfully";
 	}
-
-	// This method allows the user to return the seed by id
-	private Seed returnSeed(Long id) {
-		return seedRepo.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("There is no seed with id: " + id));
-	}
-
-	// This method allows the user to update the seed attributes
-	private void updateAttributes(Seed seed, SeedRequestDTO seedDTO) {
-
-		validations.forEach(v-> v.validation(seed, seedDTO));
-
-
-	}
-	// This method create a seed entity and set the attributes from DTO to Seed.
-	private void setAttributes(Seed seed, SeedRequestDTO seedDTO) {
-
-		seed.setPopularName(seedDTO.getPopularName());
-		seed.setTypeOfStorage(TypeOfStorage.valueOf(seedDTO.getTypeOfStorage()));
-		seed.setSeedImg(seedDTO.getSeedImg());
-		seed.setSeedDescription(seedDTO.getSeedDescription());
-		seed.setScientificName(seedDTO.getScientificName());
-		seed.setFamilyName(seedDTO.getFamilyName());
-		seed.setLocationOfCollection(seedDTO.getLocationOfCollection());
-
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-		seed.setDateOfCollection(LocalDate.parse(seedDTO.getDateOfCollection(), dtf));
-	}
-
-	private User returnUser(String email) {
-
-		Optional<User> user = userRepo.findByEmail(email);
-
-		return user.get();
-	}
-
-	private void permissionValidation(String emailUserLogged, String ownerEmail, String msg) {
-
-		if (!emailUserLogged.equals(ownerEmail)) {
-			throw new PostOwnerException(msg);
-		}
-
-	}
-
+	
 	private void verifyDate(String dateOfCollection) {
 
 		LocalDate localDate = returnLocalDate(dateOfCollection);
@@ -147,7 +94,7 @@ public class SeedService {
 		}
 
 	}
-
+	
 	private LocalDate returnLocalDate(String date) {
 
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -156,5 +103,60 @@ public class SeedService {
 
 		return localDate;
 	}
+	
+	private User returnUser(String email) {
+
+		Optional<User> user = userRepo.findByEmail(email);
+
+		return user.get();
+	}
+	
+	// This method creates a seed entity and set the attributes from DTO to Seed.
+		private Seed createSeedAndSetAttributes(SeedRequestDTO seedDTO, User user) {
+			
+			Seed seed = new Seed();
+			
+			seed.setUser(user);
+			seed.setPopularName(seedDTO.getPopularName());
+			seed.setTypeOfStorage(TypeOfStorage.valueOf(seedDTO.getTypeOfStorage()));
+			seed.setSeedImg(seedDTO.getSeedImg());
+			seed.setSeedDescription(seedDTO.getSeedDescription());
+			seed.setScientificName(seedDTO.getScientificName());
+			seed.setFamilyName(seedDTO.getFamilyName());
+			seed.setLocationOfCollection(seedDTO.getLocationOfCollection());
+
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+			seed.setDateOfCollection(LocalDate.parse(seedDTO.getDateOfCollection(), dtf));
+			
+			return seed;
+		}
+		
+		
+
+	// This method allows the user to return the seed by id
+	private Seed returnSeed(Long id) {
+		return seedRepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("There is no seed with id: " + id));
+	}
+
+	
+	private void permissionValidation(String emailUserLogged, String ownerEmail, String msg) {
+
+		if (!emailUserLogged.equals(ownerEmail)) {
+			throw new PostOwnerException(msg);
+		}
+
+	}
+	
+	// This method allows the user to update the seed attributes
+	private void updateAttributes(Seed seed, SeedRequestDTO seedDTO) {
+
+		validations.forEach(v-> v.validation(seed, seedDTO));
+
+
+	}
+	
+
 
 }

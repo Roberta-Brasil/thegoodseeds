@@ -2,8 +2,6 @@ package com.thegoodseeds.seedsaversapp.dtos;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thegoodseeds.seedsaversapp.entities.User;
 
