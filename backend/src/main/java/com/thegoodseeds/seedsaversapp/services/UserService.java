@@ -102,8 +102,11 @@ public class UserService implements UserDetailsService {
 			throw new ResourceNotFoundException(
 					"Seed id : " + id + " was not found or this seed does not belong to this user");
 		}
-		
-		return seed.get();
+		Seed result= null;
+		if(seed.isPresent()) {
+			result = seed.get();
+		};
+		return result;
 	}
 
 	// this method set the user profile information
