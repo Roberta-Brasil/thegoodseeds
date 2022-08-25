@@ -97,17 +97,19 @@ public class UserService implements UserDetailsService {
 	private Seed returnSeed(User user, Long id) { 
 		
 		Optional<Seed> seed = seedRepo.findById(id);
+		
+		if (seed == null) {
 
-		if( seed.isEmpty() ||!seed.get().getUser().equals(user)) {
+//		if( seed.isEmpty() ||!seed.get().getUser().equals(user)) {
 			throw new ResourceNotFoundException(
 					"Seed id : " + id + " was not found or this seed does not belong to this user");
 		}
-		Seed result= null;
-		if(seed.isPresent()) {
-			result = seed.get();
-		};
-		return result;
-	}
+//		Seed result= null;
+//		if(seed.isPresent()) {
+//			result = seed.get();
+//		};
+		return seed.get();
+	} 
 
 	// this method set the user profile information
 	private void setAttributes(User user, UserDTO userDTO) {
