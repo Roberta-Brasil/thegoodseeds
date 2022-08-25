@@ -51,8 +51,8 @@ public class Post {
 		instanceLocalDateTime();
 	}
 
-	public Integer getLikesUsers() {
-		return likesUsers.size();
+	public List<LikesPostUser> getLikesUsers() {
+		return this.likesUsers;
 	}
 
 	public void addLikesUsers(LikesPostUser like) {
@@ -126,6 +126,10 @@ public class Post {
 
 	public void setSeed(Seed seed) {
 		this.seed = seed;
+	}
+	
+	public void countLikes() {
+		this.likesQuantity = this.likesUsers.size();
 	}
 
 }

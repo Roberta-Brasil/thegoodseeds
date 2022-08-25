@@ -97,4 +97,9 @@ public class PostController {
 		return ResponseEntity.ok().body(postDto);
 	}
 	
+	@GetMapping("/{id}/likes")
+	@Operation(summary = "Likes Action")
+	public ResponseEntity<String> likesPostUser(@PathVariable Long id, Principal principal) {
+		return ResponseEntity.ok().body(postService.likesClick(id, principal));
+	}
 }

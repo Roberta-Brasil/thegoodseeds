@@ -31,9 +31,7 @@ public class LikesPostUser {
 		// TODO Auto-generated constructor stub
 	}
 
-	public LikesPostUser( Boolean like, Post post, User user) {
-	
-		this.likes = like;
+	public LikesPostUser(Post post, User user) {
 		this.post = post;
 		this.user = user;
 	}

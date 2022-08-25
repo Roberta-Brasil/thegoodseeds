@@ -3,6 +3,7 @@ package com.thegoodseeds.seedsaversapp.services;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,12 @@ import com.thegoodseeds.seedsaversapp.dtos.request.CommentRequestDTO;
 import com.thegoodseeds.seedsaversapp.dtos.request.PostRequestDTO;
 import com.thegoodseeds.seedsaversapp.dtos.response.PostResponseDTO;
 import com.thegoodseeds.seedsaversapp.entities.Comment;
+import com.thegoodseeds.seedsaversapp.entities.LikesPostUser;
 import com.thegoodseeds.seedsaversapp.entities.Post;
 import com.thegoodseeds.seedsaversapp.entities.Seed;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.CommentRepository;
+import com.thegoodseeds.seedsaversapp.repositories.LikesPostUserRepository;
 import com.thegoodseeds.seedsaversapp.repositories.PostRepository;
 import com.thegoodseeds.seedsaversapp.repositories.SeedRepository;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
@@ -37,6 +40,9 @@ public class PostService {
 
 	@Autowired
 	private SeedRepository seedRepo;
+	
+	@Autowired
+	private LikesPostUserRepository likesRepo;
 
 	public List<PostResponseDTO> findAll(String seedPopularName) {
 
@@ -84,7 +90,7 @@ public class PostService {
 
 		Post post = returnPostDataBase(id);
 
-		String emailUserLogged = principal.getName(); // esse getName retorna o email do Usuário logado.
+		String emailUserLogged = principal.getName(); // This getName returns the user logged email.
 
 		String ownerEmail = post.getUser().getUsername();
 
@@ -148,6 +154,43 @@ public class PostService {
 		return new PostResponseDTO(post);
 	}
 	
+	// This method inserts and removes likes
+	 public String likesClick(Long postId, Principal principal) {
+		 
+		 Optional<Post> postDb = postRepo.findById(postId);//this method transverse the post by id
+		 postDb.orElseThrow( () -> new ResourceNotFoundException("Post not found!"));
+		 Post currentPost = postDb.get();
+		 User user = returnUser(principal.getName());
+		
+		//This code verifies posts with user likes 
+		List<LikesPostUser> listLike = currentPost.getLikesUsers()
+		 	.stream()
+		 	.filter((obj) -> obj.getUser().equals(user))
+		 	.collect(Collectors.toList());
+		
+		if(listLike.size() > 0) { // this code transverse, update and unlike the post
+			List<LikesPostUser> updateList = currentPost.getLikesUsers()
+				 	.stream()
+				 	.filter((obj) -> !obj.getUser().equals(user))
+				 	.collect(Collectors.toList());
+			currentPost.setLikesUsers(updateList);
+			currentPost.setLikesQuantity(updateList.size());
+			postRepo.save(currentPost);
+			likesRepo.deleteById(listLike.get(0).getId());
+			
+		} else {  // this code adds likes
+			LikesPostUser likeUser = likesRepo.save(new LikesPostUser(currentPost, user));
+			currentPost.addLikesUsers(likeUser);
+			currentPost.setLikesQuantity(currentPost.getLikesQuantity()+1);
+			postRepo.save(currentPost);
+		}
+		 	 
+		 
+		return "Action Done!";
+		 
+	 }
+	 
+	//this method checks the filter parameters
 	 private List<Post> checkFilterParam(String seedPopularName) {
 	    	
 	    	List<Post> posts;
@@ -165,11 +208,12 @@ public class PostService {
 	    	
 	    }
 	    
-		
+	//This methods returns all posts on the search
 		private List<Post> returnAllPosts() {
 			return postRepo.findAll();
 		}
 		
+		//This methods filter posts by popular name
 		private List<Post> returnPostFilterByPopularName(String seedPopularName) {
 			
 		List<Seed> seeds = seedRepo.findByPopularNameContains(seedPopularName);
@@ -209,6 +253,5 @@ public class PostService {
 		}
 
 	}
-
-
-}
+	
+	}

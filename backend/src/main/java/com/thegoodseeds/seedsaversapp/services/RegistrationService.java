@@ -1,7 +1,6 @@
 package com.thegoodseeds.seedsaversapp.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -12,7 +11,6 @@ import com.thegoodseeds.seedsaversapp.dtos.request.RegisterUserRequestDTO;
 import com.thegoodseeds.seedsaversapp.entities.User;
 import com.thegoodseeds.seedsaversapp.repositories.UserRepository;
 import com.thegoodseeds.seedsaversapp.services.businessRules.registerUser.RegisterUserValidation;
-import com.thegoodseeds.seedsaversapp.services.exceptions.EmailAlreadyExistsException;
 
 @Service
 @Profile(value = { "test", "prod", "dev02" })
