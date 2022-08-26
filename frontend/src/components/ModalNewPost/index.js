@@ -1,17 +1,17 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosClose } from "react-icons/io";
-import { TitleModal, ContainerHeader, ContainerBody, ContainerInput, FooterForm, ContainerAddSeed } from './styles';
+import { TitleModal, ContainerHeader, ContainerBody, ContainerInput, FooterForm, } from './styles';
 import { Button } from '../Button';
-
+import axios from 'axios';
 
 import * as Yup from 'yup';
 import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { TbSquarePlus } from "react-icons/tb";
+import useAuth from "../../hooks/useAuth";
+import { url } from '../../services/url';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -24,15 +24,15 @@ const style = {
   p: 2,
 };
 
-export function ModalNewPost({ valueModal, closeModal }) {
-  const formRefCad = useRef(null);
-  const api = "localhost.com"
+export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
   const refFormUpdate = useRef(null);
+  const { token } = useAuth();
 
-  const [seedsOpen, setSeedsOpen] = useState(false);
   const [filterSeeds, setFilterSeeds] = useState([]);
+  const [mySeedsPost, setMySeedsPost] = useState([{}]);
 
-  const loginUserFormSchema = Yup.object().shape({
+
+  const formSchema = Yup.object().shape({
     title: Yup.string().required(
       'title é obrigatório.'
     ),
@@ -54,105 +54,93 @@ export function ModalNewPost({ valueModal, closeModal }) {
     reset,
      formState: {errors}
      } = useForm(
-      {resolver: yupResolver(loginUserFormSchema)}
+      {resolver: yupResolver(formSchema)}
      )
 
 
-     const getMySeedsById = useCallback(async (id) => {
-      try {
-        // const response = await api.get(
-        //   `user/myseed/${id}`
-        // );
-        // const dataSeed  = response.data
-        // setFilterSeeds(dataSeed)
+    async function tryGetMySeeds() {
 
-        setFilterSeeds([
-          {value:1, label:'family name'},
-          {value:2, label:'popular name'},
-          {value:3, label:'xxxx name'},
-          {value:4, label:'yyy name'},
-          {value:5, label:'z name'},
-        ])
+      const newApi = axios.create( {
+        baseURL: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Access-Control-Allow-Origin": "*",
+        }})   
+    
+     await newApi
+     .get(`/users/myseeds`)
+     .then((res) => 
+     {
+       console.log(res) 
+       setMySeedsPost(res.data)
+    
+     }).catch((error) => {
+      alert(error)
+     })
+    
+    }
 
-      
-      } catch (error) {
-        console.log(error);
-        alert('Erro no GET')
-      }
-    }, []);
+     async function tryCreateNewPost(data) {
+      const {
 
+        title,
+        postMessage,
+        seedIdDto
+      } =data
 
-     
-  const sendToApi = useCallback(
-    async (dataSeeds) => {
-      try {
+      const newApi = axios.create({
+        baseURL: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Access-Control-Allow-Origin": "*",
+        }})   
 
-    const { title, postMessage, seedIdDto } = dataSeeds 
-
-        await api.post('route-api-seed-heroku', {
+        await newApi.post(`/posts`, {
           title,
           postMessage,
-          seedIdDto:{id:seedIdDto}
-        });
+          seedIdDto: {
+            id:mySeedsPost?.find((data) => data.popularName == seedIdDto).id
 
-       alert('Post feito com sucesso!')
-      } catch (error) {
-       alert('Erro na requisição.')
+          }
+        })
+        .then((data) => {
 
+          refreshPosts()
+          closeModalMethod()
+  
+        }).catch ((error) => {
+          console.log('error: catch da funcao tryCreateNewPost ' +error)
+          alert('error: catch da funcao tryCreateNewPost ' +error)
+        }) 
+  
       }
-    },
-    []
-  );
 
-  const submitForm = (data) => {
-    console.log(data)
 
-    sendToApi(data)
+  const submitForm = async (data) => {
+    try {
+      await tryCreateNewPost(data);
+
+    } catch (error) {
+      console.log('error -----------')
+      console.log(error)
+      alert('ERROR!',error)
+    }
     
   }
 
+  
   const closeModalMethod = () => {
-    const resetFields = {
-      title: '',
-      postMessage: '',
-      seedIdDto: ''
-    };
-    setSeedsOpen(false)
-    reset(resetFields);
-
+    reset();
+    setMySeedsPost(null)
     closeModal()
   }
 
-   const searchSeeds = () => {
 
-    const idUser = '123'
-
-    getMySeedsById(idUser)
-    setSeedsOpen(!seedsOpen)
-
-    }
-
-    // function fillSeedDto(flag) {
-
-    //   const findSeed = filterSeeds.find(
-    //     seed => seed.value == flag
-    //   );
-
-    //   console.log(findSeed.label)
-    //   return findSeed.label;
-    // }
-
-    // useEffect(() => {
-
-    //   const fillTipoProduto = {
-    //     title:' asdsdsa',
-    //     postMessage: '123213',
-    //     seedIdDto:fillSeedDto(2)
-
-    //   };
-    //   reset(fillTipoProduto);
-
-    // }, [valueModal])
+    useEffect(() => {
+      if(valueModal ==true){
+        tryGetMySeeds()
+      }
+    }, [valueModal == true])
     
 
   return (
@@ -180,49 +168,49 @@ export function ModalNewPost({ valueModal, closeModal }) {
               <ContainerInput>
                 <label htmlFor="title">Title</label>
                 <input
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
                       id="title"
                       type="text"
                       placeholder="Your title"
                       {...register('title')}
                       name='title'
                     />
-                {errors.title && <span s>{errors.title?.message}</span> }
+                {errors.title && <span>{errors.title?.message}</span> }
               </ContainerInput>
 
               <ContainerInput>
                 <label htmlFor="postMessage">Post Message</label>
                 <input
                       id="postMessage"
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
                       type="text"
                       placeholder="Your postMessage"
                       {...register('postMessage')}
                       name='postMessage'
                     />
-                {errors.postMessage && <span s>{errors.postMessage?.message}</span> }
+                {errors.postMessage && <span>{errors.postMessage?.message}</span> }
               </ContainerInput>
 
               <ContainerInput>
                 <label htmlFor="seed">Select a seed</label>
-      <ContainerAddSeed>
 
-<select
-disabled={!seedsOpen}
-id="seedIdDto"
-placeholder="Select a seed"
-{...register('seedIdDto')}
-name='seedIdDto'
->
-    {
-      filterSeeds.map((data) => 
-       <option key={data.value} >{data.label}</option>
-      )
-    }
-  </select>
+                <select
+                placeholder="Select a seed"
+                {...register('seedIdDto')}
+                name='seedIdDto'
+                >
+                      <option selected value="" disabled>Choose one seed</option>
 
-                <TbSquarePlus onClick={() => searchSeeds()} color='#395908' size={32} style={{ cursor:'pointer' }} />
+                    {
+                      mySeedsPost &&
+                      mySeedsPost?.map((data,index) => 
+                      <option  key={index} >{data.popularName}</option>
+                      )
+                    }
+                  </select>
 
-                </ContainerAddSeed>
-                {errors.seedIdDto && <span s>{errors.seedIdDto?.message}</span> }
+                {errors.seedIdDto && <span>{errors.seedIdDto?.message}</span> }
               </ContainerInput>
 
               <FooterForm>

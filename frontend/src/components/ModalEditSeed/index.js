@@ -1,18 +1,20 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
+import React, { useState,  useEffect } from 'react';
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { storage } from '../../services/firebase'
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosClose } from "react-icons/io";
-import { TitleModal, ContainerHeader, ContainerBody, ContainerInput, FooterForm , ContainerAddSeed} from '../ModalNewPost/styles';
+import { TitleModal, ContainerHeader, ContainerBody, ContainerInput, FooterForm , } from '../ModalNewPost/styles';
 import { Button } from '../Button';
 import { format, } from 'date-fns';
-
-
+import useAuth from "../../hooks/useAuth";
+import axios from 'axios';
 import * as Yup from 'yup';
 import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { TbSquarePlus } from "react-icons/tb";
+import { typeStorage } from '../../constants/typeStorage';
+import { url } from '../../services/url';
+import { ContainerEditInput } from './styles';
 
 const style = {
   position: 'absolute',
@@ -27,64 +29,69 @@ const style = {
 };
 
 export function ModalEditSeed({ valueModal, closeModal,
+  refreshSeeds,
+  id,
 popularName,
 familyName,
 scientificName,
 seedDescription,
-seedImage,
+seedImg,
 typeOfStorage,
 locationOfCollection,
 dateOfCollection,
 }) {
-  const formRefCad = useRef(null);
 
-  const saveForm = () => (
-    alert('FINISH')
-  )
+  const { token } = useAuth();
 
-    
   const [seedsOpen, setSeedsOpen] = useState(false);
-  const [filterTypeStorage, setFilterTypeStorage] = useState([]);
+  const [imgURL, setImgURL] = useState(seedImg);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+
+    const handleSendImageToFirebase = (file, data) => {
+      setLoadingUpload(true)
+      console.log(file)
+      if (!file ) {
+        tryEditNewSeed(data, file);
+
+        return;
+      }
+  
+      const storageRef =  ref(storage, `images/${file.name}`);
+       const uploadTask  = uploadBytesResumable(storageRef, file);
+  
+      uploadTask.on(
+        "state_changed",
+        (snapshot)  => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          // setPorgessPorcent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        () =>   {
+          getDownloadURL(uploadTask.snapshot.ref)
+          .then((downloadURL)  =>  {
+            console.log(downloadURL)
+             setImgURL(downloadURL);
+             tryEditNewSeed(data, downloadURL);
+  
+          }).catch((error) => {
+            alert(error)
+            
+          }).finally(() => {
+            setLoadingUpload(false)
+          })
+        }
+      );
+    };
+
 
   
-
-  const refFormUpdate = useRef(null); 
-  
-  const getMySeedsById = useCallback(async (id) => {
-    try {
-      // const response = await api.get(
-      //   `user/myseed/${id}`
-      // );
-      // const dataSeed  = response.data
-      // setFilterTypeStorage(dataSeed)
-
-      setFilterTypeStorage([
-        {value:1, label:'family name'},
-        {value:2, label:'popular name'},
-        {value:3, label:'xxxx name'},
-        {value:4, label:'yyy name'},
-        {value:5, label:'z name'},
-      ])
-
-    
-    } catch (error) {
-      console.log(error);
-      alert('Erro no GET')
-    }
-  }, []);
-
-  const searchSeeds = () => {
-
-    const idUser = '123'
-
-    getMySeedsById(idUser)
-    setSeedsOpen(!seedsOpen)
-
-    }
+  const formSchema = Yup.object().shape({
 
 
-  
-  const loginUserFormSchema = Yup.object().shape({
     popularName: Yup.string().required(
       'popularName é obrigatório.'
     ),
@@ -123,40 +130,84 @@ dateOfCollection,
     reset,
      formState: {errors}
      } = useForm(
-      {resolver: yupResolver(loginUserFormSchema)}
+      {resolver: yupResolver(formSchema)}
      )
 
-     const submitForm = (data) => {
-        // dateOfCollection:format(new Date(dateOfCollection), 'yyyy-MM-dd')
+     const close = () => {
 
-      console.log(data)
+      closeModal()
   
-      // sendToApi(data)
+      reset()}
+
+     async function tryEditNewSeed(data, downloadURL) {
+      const typeOfStorageName = data.typeOfStorage
+
+      const newApi = axios.create({
+        baseURL: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Access-Control-Allow-Origin": "*",
+        }})   
+
+        await newApi.put(`/seeds/${id}`, {
+
+            popularName:data.popularName,
+            scientificName:data.scientificName,
+            familyName:data.familyName,
+            seedDescription:data.seedDescription,
+            seedImg:downloadURL ? downloadURL : seedImg ,
+            typeOfStorage: typeStorage.find((data) => data.label == typeOfStorageName).value ,
+            locationOfCollection:data.locationOfCollection,
+            dateOfCollection:format(new Date(data.dateOfCollection), 'dd/MM/yyyy')
+
+        })
+        .then((data) => {
+          console.log(data)
+          refreshSeeds()
+          closeModal()
+          setLoadingUpload(false)
+
+          reset()
+     alert('The seed was updated succssefully!')
+
+  
+        }).catch((error) => {
+          alert(error)
+          
+        }).finally(() => {
+          setLoadingUpload(false)
+        })
+
+  
+      }
+
+     const submitForm = async  (data) => {
+      try {
+      handleSendImageToFirebase(data.seedImg[0], data)
+
+      } catch (error) {
+        alert('ERROR!',error)
+      }
       
     }
 
     function fillTypeStorage(flag) {
 
-      const findStorage = filterTypeStorage.find(
+      const findStorage = typeStorage.find(
         storage => storage.value == flag
       );
 
       console.log(findStorage)
 
-      // return findStorage.label;
     }
 
-     
-
     useEffect(() => {
-      searchSeeds()
 
       const fillSeed = {
         popularName:popularName,
         familyName:familyName,
         scientificName:scientificName,
         seedDescription:seedDescription,
-        seedImage:seedImage,
         typeOfStorage:fillTypeStorage(4),
         locationOfCollection:locationOfCollection,
         dateOfCollection:format(new Date(dateOfCollection), 'yyyy-MM-dd')
@@ -164,10 +215,7 @@ dateOfCollection,
       };
       reset(fillSeed);
 
-      // console.log(fillSeed)
-    }, [valueModal])
-    
-
+    }, [valueModal == true])
 
   return (
     <div>
@@ -181,7 +229,7 @@ dateOfCollection,
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Edit seed XPTO</TitleModal>
-            <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={closeModal} />
+            <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={() => close()} />
           </ContainerHeader>
 
 
@@ -196,6 +244,8 @@ dateOfCollection,
                 <input
                 id="popularName"
                   type="text"
+                pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
                   name="popularName"
                   placeholder="popularName"
                   {...register('popularName')}
@@ -209,6 +259,8 @@ dateOfCollection,
                 <input
                 id="scientificName"
                   type="text"
+                pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
                   name="scientificName"
                   placeholder="scientificName"
                   {...register('scientificName')}
@@ -222,6 +274,7 @@ dateOfCollection,
                 <label htmlFor="descricao">Family Name</label>
                 <input
                 id="familyName"
+                pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
 
                   type="text"
                   name="familyName"
@@ -247,40 +300,44 @@ dateOfCollection,
 
               </ContainerInput>
 
-              <ContainerInput>
+              <ContainerEditInput>
                 <label htmlFor="seedImg">Seed Image</label>
-                <input
+                <div>
+
+                <img  style={{
+                    width:40, height:40 ,  marginRight:8, borderRadius:4
+                }}  src={seedImg} />
+
+<input
                 id="seedImg"
                   type="file"
                   name="seedImg"
                   placeholder="seed Image"
                   accept="image/*"
-                  {...register('seedImg')}
-                />
-                {/* {errors.seedImg && <span>{errors.seedImg?.message}</span>} */}
+                  {...register('seedImg')} />
 
-              </ContainerInput>
+                </div>
+
+                {errors.seedImg && <span>{errors.seedImg?.message}</span>}
+
+              </ContainerEditInput>
 
               <ContainerInput>
                 <label htmlFor="seed">Select a storage</label>
-      <ContainerAddSeed>
 
 <select
-disabled={!seedsOpen}
 id="typeOfStorage"
 placeholder="Select a storage"
 {...register('typeOfStorage')}
 name='typeOfStorage'
 >
     {
-      filterTypeStorage.map((data) => 
+      typeStorage.map((data) => 
        <option key={data.value} >{data.label}</option>
       )
     }
   </select>
-                <TbSquarePlus onClick={() => searchSeeds()} color='#395908' size={32} style={{ cursor:'pointer' }} />
 
-                </ContainerAddSeed>
                 {errors.typeOfStorage && <span>{errors.typeOfStorage?.message}</span> }
                 
               </ContainerInput>
@@ -289,6 +346,7 @@ name='typeOfStorage'
                 <label htmlFor="descricao">Location Of Collection</label>
                 <input
 id="locationOfCollection"
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
 
                   type="text"
                   name="locationOfCollection"
@@ -305,9 +363,9 @@ id="locationOfCollection"
 
 <input
  type="date" 
+ 
 id="dateOfCollection"
 name="dateOfCollection" 
-        placeholder="dd-mm-yyyy" 
 {...register('dateOfCollection')}
 
         />
@@ -316,8 +374,18 @@ name="dateOfCollection"
               </ContainerInput>
 
 <FooterForm>
-              <Button onClick={closeModal} cor='#EB5353' altura={40} title='Cancel' />
-              <Button Type='submit' cor='#1FAD66' altura={40} title='Save' />
+
+              { !loadingUpload ?
+
+<>
+ <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />
+ <Button Type='submit' cor='#1FAD66' altura={40} title='Update' />
+</>
+
+:
+
+<TitleModal>Loading datas...</TitleModal>
+ }
 
 </FooterForm>
 

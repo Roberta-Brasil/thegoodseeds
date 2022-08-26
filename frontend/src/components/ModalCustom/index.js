@@ -8,7 +8,6 @@ export function ModalCustom({valueModal, closeModal}) {
     <>
     <Modal
       isOpen={valueModal}
-      // onRequestClose={closeModal}
       contentLabel="Example Modal"
       overlayClassName="modal-overlay"
       className="modal-content"

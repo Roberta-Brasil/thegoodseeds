@@ -1,85 +1,58 @@
-import React, { useState,useCallback } from "react";
-import axios from 'axios';
-
-import Input from "../../components/InputLogin";
+import React, { useState } from "react";
 import Button from "../../components/ButtonLogin";
 import * as C from "../SignIn/styles";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-
 import * as Yup from 'yup';
 import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../assets/logo.jpeg';
+import axios from 'axios';
+import { url } from "../../services/url";
 
 export const SignUp = () => {
+  const navigate = useNavigate();
   const [errorGlobal, setErrorGlobal] = useState("");
 
-   const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  headers: {
-    Application:'Access-Control-Allow-Origin'
-  }
+  async function tryRegisterUser(data) {
 
-});
+    const {
+      userName,
+      email,
+      password,
+    }= data
 
-  const navigate = useNavigate();
+     const newApi = axios.create( {
+      baseURL: url,
+      headers: {
+        Application:'Access-Control-Allow-Origin',
+      }})
 
-  const { signup } = useAuth();
+      await newApi.post(`/registration`, {
+        userName,
+        email,
+        password,
+      })
+      .then((res) => {
+        console.log(res)
+        alert("The account was successfully registered!")
+        navigate("/")
 
-  const sendRegisterToApi = useCallback(
-    async (dataRegister) => {
-      try {
-
-    const { userName, email, password } = dataRegister 
-
-        await api.post('/registration', {
-          userName, email, password
-        }).then((data) => {
-          console.log(data)
-        })
-
-       alert('Post feito com sucesso!')
-      } catch (error) {
-       alert('Erro na requisição.')
-
-      }
-    },
-    []
-  );
-
-  const handleSignup = (userName, email, password) => {
-          //METODO PARA REQUISICAO DO DO REGISter  --- /auth
-
-          alert(userName)
-          
-
-          return
-
-    // if ( !name | !email | !password) {
-    //   return;
-    // } 
-
-    // const res = signup(name, email, password);
-    // if (res) {
-    //   setErrorGlobal(res);
-    //   return;
-    // }
-
-    // alert("Usuário cadastrado com sucesso!");
-    // navigate("/");
-  };
-
+      }).catch((error) => {
+        console.log(error)
+      })
+      
+     
+    }
 
   const registerUserFormSchema = Yup.object().shape({
-    userName: Yup.string().required(
-      'name is required.'
+    name: Yup.string().required(
+      'name é obrigatório.'
     ),
     email: Yup.string().required(
-      'email is required.'
+      'email é obrigatório.'
     ),
     password: Yup.string().required(
-      'password is required.'
+      'password é obrigatório.'
     ), 
   })
 
@@ -92,11 +65,16 @@ export const SignUp = () => {
     {resolver: yupResolver(registerUserFormSchema)}
    )
 
-const submitForm = (data) => {
-  // console.log(data)
-  sendRegisterToApi(data)
+const submitForm = async (data) => {
 
-  // handleSignup(data.userName, data.email, data.password)
+  try {
+    await tryRegisterUser(data);
+
+  } catch (error) {
+    console.log(error)
+    alert('ERROR!',error)
+  }
+
 }
 
   return (
@@ -105,19 +83,18 @@ const submitForm = (data) => {
       <img src={logo}  style={{ width:100, height:100 }}  />
 
       <C.Content>
-     
         
       <form onSubmit={handleSubmit(submitForm)} >
 
       <label htmlFor="name">name</label>
 <input
-id="userName"
+id="name"
 type="name"
 placeholder="Your Name"
-{...register('userName')}
-name='userName'
+{...register('name')}
+name='name'
 />
-{errors.userName && <span>{errors.userName?.message}</span> }
+{errors.name && <span>{errors.name?.message}</span> }
 
 <label htmlFor="email">email</label>
 <input
@@ -130,13 +107,17 @@ name='email'
 {errors.email && <span>{errors.email?.message}</span> }
 
 <label htmlFor="password">password</label>
-<input
-id="password"
-type="password"
-placeholder="Your password"
-{...register('password')}
-name='password'
-/>
+  <input
+  id="password"
+  type="password"
+  minLength="8" 
+  pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^0-9a-zA-Z]).{8,26}$"
+  title="Digite uma senha com 8 letras, 1 maiúscula e 1 caractére especial."
+  x-moz-errormessage="Digite uma senha com 8 letras, 1 maiúscula e 1 caractére especial."
+  placeholder="Your password"
+  {...register('password')}
+  name='password'
+  />
 {errors.password && <span>{errors.password?.message}</span> }
 
 <span>{errorGlobal}</span>

@@ -22,7 +22,8 @@ transition: filter 0.2s;
 
 p {
   font-size:12px ;
-  color:var(--clean-light)
+  color:var(--clean-light);
+  margin-top:3px;
 }
 
 `;

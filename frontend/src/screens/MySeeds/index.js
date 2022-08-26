@@ -1,40 +1,57 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button } from '../../components/Button';
 import { ComponentMySeeds } from '../../components/ComponentMySeeds';
 import { ModalNewSeed } from '../../components/ModalNewSeed';
 import { Container, ContainerHeader } from './styles';
+import useAuth from "../../hooks/useAuth";
+import axios from 'axios';
+import { url } from '../../services/url';
 
 export function MySeeds() {
-  const [openModal, setOpenModal] = useState(false);
+  const { token } = useAuth();
 
-  const mySeedsPost = [
-    {
-      id:1,
-      popularName:'Semente Guaraná',
-      familyName:'Semente Guaraná',
-      scientificName:'Semente Guaraná',
-      seedDescription:'plantada na amazonia XPTO',
-      seedImage:'https://thumbs.dreamstime.com/z/sementes-de-guarana-53257458.jpg',
-      typeOfStorage:1,
-      locationOfCollection:'Location Test',
-      dateOfCollection:'01/02/2018'
-    },
-    {
-      id:2,
-      popularName:'Semente Soja',
-      familyName:'Semente Guaraná',
-      scientificName:'Semente Soja',
-      seedDescription:'plantada na mata atlatntica XPTO',
-      seedImage:'https://www.brasmaxgenetica.com.br/blog/wp-content/uploads/sites/6/2021/05/IMG-MAI_A03-1200x675.png',
-      typeOfStorage:2,
-      locationOfCollection:'Location Test',
-      dateOfCollection:'05/02/2018'
-    },
-  ]
+  const [openModal, setOpenModal] = useState(false);
+  const [mySeedsPost, setMySeedsPost] = useState(null);
+
+async function tryGetMySeeds() {
+
+  const newApi = axios.create( {
+    baseURL: url,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Access-Control-Allow-Origin": "*",
+    }})   
+
+ await newApi
+ .get(`/users/myseeds`)
+ .then((res) => 
+ {
+   console.log(res) 
+   setMySeedsPost(res.data)
+
+ }).catch((error) => {
+  alert(error)
+ })
+
+}
+
+const initializeTryGetMySeeds = async () => {
+  try {
+    await tryGetMySeeds();
+
+  } catch (error) {
+    alert('ERROR!',error)
+  }
+
+}
+
+useEffect(  ()  =>  {
+    initializeTryGetMySeeds()
+}, [])
 
   return (
     <Container>
-      <ModalNewSeed valueModal={openModal} closeModal={() => setOpenModal(false)} />
+      <ModalNewSeed refreshSeeds={() => initializeTryGetMySeeds()} valueModal={openModal} closeModal={() => setOpenModal(false)} />
       <ContainerHeader>
 <h1>My seeds here</h1>
 <Button onClick={() => setOpenModal(true)}  title='Add new seed' cor={'#789C32'} corTexto='#f6f7f8' />
@@ -43,14 +60,17 @@ export function MySeeds() {
       <div>
 
     {
-        mySeedsPost.map((data) => 
+      mySeedsPost &&
+        mySeedsPost?.map((data) => 
           <ComponentMySeeds
+          id={data.id}
+          initializeTryGetMySeeds={() => initializeTryGetMySeeds()}
           key={data.id}
           popularName={data.popularName}
           familyName={data.familyName}
           scientificName={data.scientificName}
           seedDescription={data.seedDescription}
-          seedImage={data.seedImage}
+          seedImg={data.seedImg}
           typeOfStorage={data.typeOfStorage}
           locationOfCollection={data.locationOfCollection}
           dateOfCollection={data.dateOfCollection}

@@ -45,7 +45,6 @@ input {
   font-size: 16px;
   background-color: #e5e6e7;
   border: none;
-  width:90%;
 }
 
 select {
@@ -54,7 +53,6 @@ select {
   font-size: 16px;
   background-color: #e5e6e7;
   border: none;
-  width:90%;
 }
 
 

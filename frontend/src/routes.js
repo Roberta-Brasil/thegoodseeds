@@ -10,14 +10,12 @@ import { SignUp } from './screens/SignUp';
 import { SignIn } from './screens/SignIn';
 import { Password } from './screens/Password';
 
-import { WishList } from './screens/WishList';
-
 export const AppRoute = () => {
 
   const Private = ({ Item }) => {
-    const { signed } = useAuth();
+    const {  token } = useAuth();
 
-    return signed > 0
+    return token
       ? (<>
         <Navbar />
 
@@ -35,7 +33,6 @@ export const AppRoute = () => {
       <Routes>
         <Route exact path="/dashboard" element={<Private Item={Dashboard} />} />
         <Route exact path="/my-seeds" element={<Private Item={MySeeds} />} />
-        <Route exact path="/wishlist" element={<Private Item={WishList} />} />
         <Route path="/" element={<SignIn />} />
         <Route exact path="/password" element={<Password />} />
         <Route exact path="/sign-up" element={<SignUp />} />

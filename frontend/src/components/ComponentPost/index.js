@@ -2,36 +2,92 @@ import React, {useState} from 'react';
 import { BsStar } from "react-icons/bs";
 import { Button } from '../Button';
 import { GoCommentDiscussion } from "react-icons/go";
-import { Container, Header, TitleHeader, ButtonIcon ,SubContainer ,  TitleComments, ContainerStarButton,SubContainerPostInside, ComponentPostInside, ImageComponent, ImageUser} from './styles';
+import { Container, Header, TitleHeader, ButtonIcon ,SubContainer ,  TitleComments, ContainerStarButton,SubContainerPostInside, ComponentPostInside, ImageComponent, ImageUser, InputNewComment} from './styles';
+import { Comment } from '../Comment';
+import { BiSend } from "react-icons/bi";
+import { url } from '../../services/url';
+import axios from 'axios';
+import useAuth from "../../hooks/useAuth";
 
 
 export function ComponentPost({
-  user = 'example', 
-  titleSeed='titleSeed', 
-  descriptionHeader= 'example', 
-  imgUser, 
-  ratingStar = 0 , 
-  dateSeed='01/01/2012'
+  data,
+  refreshPosts
 }) {
 
-  const [valueStar, setValueStar] = useState(ratingStar);
+  const { token } = useAuth();
+
+  const { comments, createdTime, likesQuantity, postId, postMessage, seed, title, user } = data
+
+  const [valueStar, setValueStar] = useState(0);
   const [seedSwaped, setSeedSwaped] = useState(false);
   const [onlyRating, setOnlyRating] = useState(false);
   const [dropDownComments, setDropDownComments] = useState(false);
-
+  const [writeNewComment, setWriteNewComment] = useState(null);
   
   const favoriteItem = () => {
-    setOnlyRating(!onlyRating)
-    if(!onlyRating){
-      setValueStar(valueStar +1)
-    }else{
-      setValueStar(valueStar -1)
-    }
+    tryLikePosts()
   }
+
+  async function tryLikePosts() {
+
+    const newApi = axios.create({
+      baseURL: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Access-Control-Allow-Origin": "*",
+      }})   
+
+      await newApi.post(`/posts/${postId}/likes`)
+      .then((data) => {
+        refreshPosts()
+
+      }).catch ((error) => {
+        console.log('error: catch da funcao tryLikePosts ' +error)
+        alert('error: catch da funcao tryLikePosts ' +error)
+      }) 
+
+    }
+
+  async function trySendNewComment() {
+
+    const newApi = axios.create({
+      baseURL: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Access-Control-Allow-Origin": "*",
+      }})   
+
+      await newApi.put(`/posts/${postId}/comment`, {
+      message:writeNewComment
+      })
+      .then((data) => {
+        console.log(data)
+        refreshPosts()
+        setWriteNewComment("")
+
+      }).catch ((error) => {
+        console.log('error: catch da funcao trySendNewComment ' +error)
+        alert('error: catch da funcao trySendNewComment ' +error)
+      }) 
+
+    }
+
+  const sendMessage = () => {
+    if(!writeNewComment || writeNewComment == "") {
+      console.log('not send')
+      return
+    }
+
+    trySendNewComment()
+  }
+
+  
 
   const openComments = () => {
     setDropDownComments(!dropDownComments)
   }
+  
 
   const swapSeeds = () => {
     setSeedSwaped(!seedSwaped)
@@ -44,19 +100,19 @@ export function ComponentPost({
     <Header>
  
  <ImageUser 
- src={imgUser}
+ src={user?.profileImg}
   />
 
 <div>
-      <TitleHeader>User: {user}</TitleHeader>
+      <TitleHeader>User: {user?.email}</TitleHeader>
 </div>
 
 <div style={{ flexDirection:'row', display:'flex', alignItems:'center' }} >
-<p style={{ paddingRight:4 }} >{valueStar}</p>
+<p style={{ paddingRight:4 }} >{likesQuantity}</p>
 
 {
 
-!onlyRatingR
+!onlyRating
 
 ?
       <ButtonIcon onClick={favoriteItem} size={22} >
@@ -75,9 +131,36 @@ export function ComponentPost({
     <ComponentPostInside>
       <div  style={{ flexDirection:'column' , display:'flex',  width:'100%', paddingLeft:8, paddingRight:8, }} >
 
-      <TitleHeader>Title: {titleSeed}</TitleHeader>
-      <TitleHeader>Description: {descriptionHeader}</TitleHeader>
-      <TitleHeader>Date: {dateSeed}</TitleHeader>
+      <div style={{  display:'flex', flexDirection:'column', }} >
+
+
+<TitleHeader>Title: {title}</TitleHeader>
+<TitleHeader>Post Message: {postMessage}</TitleHeader>
+<TitleHeader>Date: {createdTime}</TitleHeader>
+
+  
+</div>
+
+
+      <div  
+      style={{
+        width:80, height:80 ,  
+        marginTop:12
+        
+      }}
+      >
+        
+      <img  style={{
+        width:80, height:80 ,   
+        borderRadius:4, 
+        objectFit:'cover'
+      }}  src={seed?.seedImg} />
+      </div>
+      <TitleHeader  >Seed: {seed?.popularName}</TitleHeader>
+
+
+      
+
 
     {/* AREA DOS COMENTARIOS */}
 {
@@ -85,13 +168,32 @@ export function ComponentPost({
   <div style={{ margin:'8px 0px' }} >
     <hr style={{ width:'100%', margin:'8px 0px' }} />
 
-  <h3>COMENTARIOS</h3>  
-  <h3>COMENTARIOS</h3>  
-  <h3>COMENTARIOS</h3>  
-  <h3>COMENTARIOS</h3>  
+  {
+    comments &&
+    comments.map((data)=> 
+
+      <Comment data={data}/>
+    )
+
+  }
+
+<div  style={{ width:'100%', display:'flex', marginTop:22, alignItems:'center' }}>
+
+  <InputNewComment
+          type='text'
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+          
+          placeholder="comment here"
+          value={writeNewComment}
+          onChange={event => setWriteNewComment(event.target.value)}
+        />
+
+        <BiSend onClick={sendMessage}  style={{ marginLeft:8, cursor:'pointer' }} size={32} color='#172601' />
+</div>
+
+
   </div> 
   }
-{/* AREA DOS COMENTARIOS */}
 
         <div style={{ justifyContent:'space-between', alignItems:'flex-end' ,
         display:'flex',width:'100%', height:'100%', marginTop:8 }} >

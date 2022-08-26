@@ -1,40 +1,17 @@
 import React, { useState } from "react";
-import Input from "../../components/InputLogin";
 import Button from "../../components/ButtonLogin";
 import * as C from "../SignIn/styles";
-import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router-dom";
+import axios from 'axios';
 
 import * as Yup from 'yup';
 import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../assets/logo.jpeg';
+import { url } from "../../services/url";
 
 export const Password = () => {
-  const { signin } = useAuth();
   const [errorGlobal, setErrorGlobal] = useState("");
-
-  const navigate = useNavigate();
-
-
-  // const handleLogin = () => {
-  //   //METODO PARA REQUISICAO DO DO LOGIN  --- /auth
-
-  //   if (!email | !senha) {
-  //     setError("Digite seu email");
-  //     return;
-  //   }
-
-  //   const res = signin(email, senha);
-
-  //   if (res) {
-  //     setError(res);
-  //     return;
-  //   }
-
-  //   navigate("/dashboard");
-  // };
-
   
   const registerUserFormSchema = Yup.object().shape({
     password: Yup.string().required(
@@ -51,10 +28,38 @@ export const Password = () => {
     {resolver: yupResolver(registerUserFormSchema)}
    )
 
-const submitForm = (data) => {
-  console.log(data)
+   async function tryResetPassword(data) {
+    const {password}= data
 
-  // handleSignup(data.name, data.email, data.password)
+    const newApi = axios.create( {
+      baseURL: url,
+      headers: {
+        Application:'Access-Control-Allow-Origin',
+      }})
+
+      await newApi.post(`/forgot-password`, {
+        password,
+      })
+      .then((res) => {
+        console.log(res)
+
+      }).catch((error) => {
+        console.log(error)
+      })
+  
+  }
+
+
+const submitForm = async (data) => {
+
+  try {
+    await tryResetPassword(data);
+
+  } catch (error) {
+    console.log(error)
+    alert('ERROR!',error)
+  }
+
 }
 
   return (
@@ -71,6 +76,10 @@ const submitForm = (data) => {
 id="password"
 type="password"
 placeholder="Your password"
+minLength="8" 
+pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^0-9a-zA-Z]).{8,26}$"
+title="Digite uma senha com 8 letras, 1 maiúscula e 1 caractére especial."
+x-moz-errormessage="Digite uma senha com 8 letras, 1 maiúscula e 1 caractére especial."
 {...register('password')}
 name='password'
 />

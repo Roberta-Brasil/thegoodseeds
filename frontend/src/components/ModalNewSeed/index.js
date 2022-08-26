@@ -1,16 +1,22 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { FormHandles } from '@unform/core';
-import { Form } from '@unform/web';
+import React, { useState, useEffect } from 'react';
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { storage } from '../../services/firebase'
+
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { IoIosClose } from "react-icons/io";
 import { TitleModal, ContainerHeader, ContainerBody, ContainerInput, FooterForm, ContainerAddSeed,  } from '../ModalNewPost/styles';
 import { Button } from '../Button';
+import axios from 'axios';
+import useAuth from "../../hooks/useAuth";
+import { format, } from 'date-fns';
 
 import * as Yup from 'yup';
 import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { TbSquarePlus } from "react-icons/tb";
+import { typeStorage } from '../../constants/typeStorage';
+import { url } from '../../services/url';
+import { SUPPORTED_FORMATS } from '../../constants/supportedFormatsImg';
 
 const style = {
   position: 'absolute',
@@ -24,91 +30,88 @@ const style = {
   p: 2,
 };
 
-export function ModalNewSeed({ valueModal, closeModal }) {
-  const formRefCad = useRef(null);
+export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
 
+  const { token } = useAuth();
   
   const [seedsOpen, setSeedsOpen] = useState(false);
+  const [imgURL, setImgURL] = useState("");
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  
+  
+  const handleSendImageToFirebase = (file, data) => {
+    if (!file) return;
 
-  const [filterTypeStorage, setFilterTypeStorage] = useState([]);
+    setLoadingUpload(true)
 
+    const storageRef =  ref(storage, `images/${file.name}`);
+     const uploadTask  = uploadBytesResumable(storageRef, file);
 
-  const saveForm = () => (
-    alert('FINISH')
-  )
+    uploadTask.on(
+      "state_changed",
+      (snapshot)  => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+      },
+      (error) => {
+        alert(error);
+      },
+      () =>   {
+        getDownloadURL(uploadTask.snapshot.ref)
+        .then((downloadURL)  =>  {
+          console.log(downloadURL)
+           setImgURL(downloadURL);
+           tryCreateNewSeed(data, downloadURL);
 
-
-  const getMySeedsById = useCallback(async (id) => {
-    try {
-      // const response = await api.get(
-      //   `user/myseed/${id}`
-      // );
-      // const dataSeed  = response.data
-      // setFilterTypeStorage(dataSeed)
-
-      setFilterTypeStorage([
-        {value:1, label:'family name'},
-        {value:2, label:'popular name'},
-        {value:3, label:'xxxx name'},
-        {value:4, label:'yyy name'},
-        {value:5, label:'z name'},
-      ])
-
-    
-    } catch (error) {
-      console.log(error);
-      alert('Erro no GET')
-    }
-  }, []);
-
-  function fillTypeStorage(flag) {
-
-    const findStorage = filterTypeStorage.find(
-      storage => storage.value == flag
+        }).catch((error) => {
+          alert(error)
+          setLoadingUpload(false)
+          
+        }).finally(() => {
+          setLoadingUpload(false)
+        })
+      }
     );
-
-    console.log(findStorage)
-
-    // return findStorage.label;
-  }
-
-  const searchSeeds = () => {
-
-    const idUser = '123'
-
-    getMySeedsById(idUser)
-    setSeedsOpen(!seedsOpen)
-
-    }
+  };
 
   
   const loginUserFormSchema = Yup.object().shape({
     popularName: Yup.string().required(
-      'popularName é obrigatório.'
+      'popularName is required.'
     ),
 
     scientificName: Yup.string().required(
-      'scientificName é obrigatório.'
+      'scientificName is required.'
     ),
  
     familyName: Yup.string().required(
-      'familyName é obrigatório.'
+      'familyName is required.'
     ),
 
     seedDescription: Yup.string().required(
-      'seedDescription é obrigatório.'
+      'seedDescription is required.'
+    ),
+
+    
+    seedImg: Yup.mixed()
+    .required("A file is required")
+    .test(
+      "fileFormat",
+      "A file is required with format jpg, png, jpeg",
+      value => value[0] && SUPPORTED_FORMATS.includes(value[0]?.type)
     ),
 
     typeOfStorage: Yup.string().required(
-      'typeOfStorage é obrigatório.'
+      'typeOfStorage is required.'
     ),
 
     locationOfCollection: Yup.string().required(
-      'locationOfCollection é obrigatório.'
+      'locationOfCollection is required.'
     ),
 
       dateOfCollection: Yup.string().required(
-      'dateOfCollection é obrigatório.'
+      'dateOfCollection is required.'
     ),
 
 
@@ -124,10 +127,62 @@ export function ModalNewSeed({ valueModal, closeModal }) {
       {resolver: yupResolver(loginUserFormSchema)}
      )
 
-     const submitForm = (data) => {
-      console.log(data)
+
+  const close = () => {
+
+    closeModal()
+
+    reset()}
   
-      // sendToApi(data)
+
+     async function tryCreateNewSeed(data, downloadURL) {
+       const typeOfStorageName = data.typeOfStorage
+
+      const newApi = axios.create({
+        baseURL: url,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Access-Control-Allow-Origin": "*",
+        }})   
+
+        await newApi.post(`/seeds`, {
+
+            popularName:data.popularName,
+            scientificName:data.scientificName,
+            familyName:data.familyName,
+            seedDescription:data.seedDescription,
+            seedImg:downloadURL,
+            typeOfStorage: typeStorage.find((data) => data.label == typeOfStorageName).value ,
+            locationOfCollection:data.locationOfCollection,
+            dateOfCollection:format(new Date(data.dateOfCollection), 'dd/MM/yyyy')
+        })
+        .then((data) => {
+
+          console.log(data)
+
+          refreshSeeds()
+          closeModal()
+          reset()
+  
+        }).catch ((error) => {
+          console.log('error: catch da funcao tryCreateNewSeed ' +error)
+          alert('error: catch da funcao tryCreateNewSeed ' +error)
+        }) 
+  
+      }
+
+
+     const submitForm = async (data) => {
+
+      try {
+      handleSendImageToFirebase(data.seedImg[0], data)
+
+  
+      } catch (error) {
+        console.log('error -----------')
+        console.log(error)
+        alert('ERROR!',error)
+      }
       
     }
 
@@ -136,7 +191,6 @@ export function ModalNewSeed({ valueModal, closeModal }) {
     <div>
       <Modal
         open={valueModal}
-        // onClose={closeModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -144,9 +198,8 @@ export function ModalNewSeed({ valueModal, closeModal }) {
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Create new seed</TitleModal>
-            <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={closeModal} />
+            <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={() => close()} />
           </ContainerHeader>
-
 
           <ContainerBody>
           <form
@@ -158,6 +211,8 @@ export function ModalNewSeed({ valueModal, closeModal }) {
                 <label htmlFor="descricao">Popular Name</label>
                 <input
                 id="popularName"
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
                   type="text"
                   name="popularName"
                   placeholder="popularName"
@@ -172,6 +227,8 @@ export function ModalNewSeed({ valueModal, closeModal }) {
                 <input
                 id="scientificName"
                   type="text"
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
                   name="scientificName"
                   placeholder="scientificName"
                   {...register('scientificName')}
@@ -186,6 +243,7 @@ export function ModalNewSeed({ valueModal, closeModal }) {
                 <label htmlFor="descricao">Family Name</label>
                 <input
                 id="familyName"
+                pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
 
                   type="text"
                   name="familyName"
@@ -221,31 +279,26 @@ export function ModalNewSeed({ valueModal, closeModal }) {
                   accept="image/*"
                   {...register('seedImg')}
                 />
-                {/* {errors.seedImg && <span>{errors.seedImg?.message}</span>} */}
+                {errors.seedImg && <span>{errors.seedImg?.message}</span>}
 
               </ContainerInput>
 
 
               <ContainerInput>
                 <label htmlFor="seed">Select a storage</label>
-      <ContainerAddSeed>
-
 <select
-disabled={!seedsOpen}
 id="typeOfStorage"
 placeholder="Select a storage"
 {...register('typeOfStorage')}
 name='typeOfStorage'
 >
     {
-      filterTypeStorage.map((data) => 
+      typeStorage.map((data) => 
        <option key={data.value} >{data.label}</option>
       )
     }
   </select>
-                <TbSquarePlus onClick={() => searchSeeds()} color='#395908' size={32} style={{ cursor:'pointer' }} />
 
-                </ContainerAddSeed>
                 {errors.typeOfStorage && <span>{errors.typeOfStorage?.message}</span> }
                 
               </ContainerInput>
@@ -255,6 +308,8 @@ name='typeOfStorage'
                 <label htmlFor="descricao">Location Of Collection</label>
                 <input
 id="locationOfCollection"
+pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.!?- ]*"
+
 
                   type="text"
                   name="locationOfCollection"
@@ -271,9 +326,10 @@ id="locationOfCollection"
 
 <input
  type="date" 
+
 id="dateOfCollection"
 name="dateOfCollection" 
-        placeholder="dd-mm-yyyy" 
+        placeholder="dd/mm/yyyy" 
 {...register('dateOfCollection')}
 
         />
@@ -282,8 +338,17 @@ name="dateOfCollection"
               </ContainerInput>
 
 <FooterForm>
-              <Button onClick={closeModal} cor='#EB5353' altura={40} title='Cancel' />
+             { !loadingUpload ?
+
+             <>
+              <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />
               <Button Type='submit' cor='#1FAD66' altura={40} title='Save' />
+             </>
+
+             :
+
+             <TitleModal>Loading datas.</TitleModal>
+              }
 
 </FooterForm>
 

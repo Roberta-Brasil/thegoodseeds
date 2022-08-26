@@ -72,7 +72,6 @@ border-radius:4px ;
 export const ImageUser = styled.img`
 width:28px ;
 height:28px ;
-background-color:var(--light) ;
 border-radius:50px ;
 `;
 
@@ -106,6 +105,20 @@ export const ContainerStarButton = styled.div`
 
 
 
+export const InputNewComment = styled.input`
+  width: 100%;
+    padding: 0 8px;
+    height: 2.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #d7d7d7;
+    background: #e7e9ee;
+    font-weight: 400;
+    color: var(light);
+    font-size: 1rem;
+    &::placeholder {
+      color: var(light);
+    }
+`
 
 
 

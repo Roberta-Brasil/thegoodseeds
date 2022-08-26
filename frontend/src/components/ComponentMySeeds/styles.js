@@ -52,7 +52,6 @@ export const TitleHeader = styled.p`
 export const ImageComponent = styled.img`
 width:80px ;
 height:80px ;
-background-color:var(--light) ;
 margin-right:16px;
 border-radius:4px ;
 border: solid 1px #a7a8a9 ;

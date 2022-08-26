@@ -3,21 +3,53 @@ import { IoMdTrash } from "react-icons/io";
 import { BsPencilSquare } from "react-icons/bs";
 import { Container, Header, TitleHeader, ButtonIcon , ButtonsActionContainer,SubContainer ,  ContainerStarButton,SubContainerPostInside, ComponentPostInside, ImageComponent, ImageUser} from './styles';
 import { ModalEditSeed } from '../ModalEditSeed';
+import { format } from 'date-fns';
+
+import axios from 'axios';
+import { url } from '../../services/url';
+import useAuth from "../../hooks/useAuth";
+
+
 export function ComponentMySeeds({
+  id,
+  initializeTryGetMySeeds,
   popularName,
   familyName,
   scientificName,
   seedDescription,
-  seedImage,
+  seedImg,
   typeOfStorage,
   locationOfCollection,
   dateOfCollection
 }) {
 
   const [openModal, setOpenModal] = useState(false);
+  const { token } = useAuth();
+
+  async function deleteSeed() {
+
+    const newApi = axios.create( {
+      baseURL: url,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Access-Control-Allow-Origin": "*",
+      }})
+
+   await newApi.delete(`/seeds/${id}`)
+   .then((data) => 
+   {
+     console.log(data) 
+     alert('The seed was deleted succssefully!')
+     initializeTryGetMySeeds()
+
+   }).catch((error) => {
+    alert(error)
+   })
+
+ }
 
   const deleteItem = () => (
-    alert('Delete Item')
+    deleteSeed()
   )
 
   const editItem = () => (
@@ -27,11 +59,13 @@ export function ComponentMySeeds({
   return (
   <Container>
       <ModalEditSeed 
+      id={id}
+      refreshSeeds={initializeTryGetMySeeds}
       popularName={popularName}
       familyName={familyName}
       scientificName={scientificName}
       seedDescription={seedDescription}
-      seedImage={seedImage}
+      seedImg={seedImg}
       typeOfStorage={typeOfStorage}
       locationOfCollection={locationOfCollection}
       dateOfCollection={dateOfCollection}
@@ -41,7 +75,7 @@ export function ComponentMySeeds({
 
     <ComponentPostInside>
 
-    <ImageComponent src={seedImage}  />
+    <ImageComponent src={seedImg}  />
 
       <div  style={{ flexDirection:'column' , display:'flex',  width:'100%', paddingLeft:8, paddingRight:8, gap:8}} >
 
@@ -51,7 +85,8 @@ export function ComponentMySeeds({
       <TitleHeader>Description: {seedDescription}</TitleHeader>
       <TitleHeader>Type Storage: {typeOfStorage}</TitleHeader>
       <TitleHeader>Location Collection: {locationOfCollection}</TitleHeader>
-      <TitleHeader>Date Collection: {dateOfCollection}</TitleHeader>
+      <TitleHeader>Date Collection: {format(new Date(dateOfCollection), 'dd/MM/yyyy')}</TitleHeader>
+
       </div>
 
 <ButtonsActionContainer>
