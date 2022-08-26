@@ -37,7 +37,6 @@ public class PostController {
 	private PostService postService;
 	
 
-
 	@GetMapping
 	@Operation(summary = "Find all posts in the System.")
 	public ResponseEntity<List<PostResponseDTO>> findAll(@RequestParam(required=false) String seedPopularName) {
@@ -97,7 +96,7 @@ public class PostController {
 		return ResponseEntity.ok().body(postDto);
 	}
 	
-	@GetMapping("/{id}/likes")
+	@PostMapping("/{id}/likes")
 	@Operation(summary = "Likes Action")
 	public ResponseEntity<String> likesPostUser(@PathVariable Long id, Principal principal) {
 		return ResponseEntity.ok().body(postService.likesClick(id, principal));

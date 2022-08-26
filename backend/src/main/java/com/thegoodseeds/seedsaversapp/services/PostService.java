@@ -40,28 +40,37 @@ public class PostService {
 
 	@Autowired
 	private SeedRepository seedRepo;
-	
+
 	@Autowired
 	private LikesPostUserRepository likesRepo;
 
+	// This method search seeds by param
 	public List<PostResponseDTO> findAll(String seedPopularName) {
 
-		    List<Post> posts = checkFilterParam(seedPopularName);
-						
-			List<PostResponseDTO> postsDTO = posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
-			
-			return postsDTO;
+		List<Post> posts;
+		System.out.println(seedPopularName);
+
+		if (seedPopularName == null) {
+			System.out.println("Hey");
+			posts = postRepo.findAll();
+		} else {
+			System.out.println("What?");
+			posts = checkFilterParam(seedPopularName);
+
 		}
-	
-	
+
+		return posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+
+	}
+
 	public PostResponseDTO findById(Long id) {
 
 		Post post = returnPostDataBase(id);
 
 		return new PostResponseDTO(post);
 	}
-	
-	//This method allows the user to add a post
+
+	// This method allows the user to add a post
 	public PostResponseDTO insert(PostRequestDTO postDTO, Principal principal) {
 
 		Post post = new Post();
@@ -85,7 +94,8 @@ public class PostService {
 		return new PostResponseDTO(post);
 
 	}
-	//This method allows the user to update a post
+
+	// This method allows the user to update a post
 	public PostResponseDTO update(Long id, PostRequestDTO postDto, Principal principal) {
 
 		Post post = returnPostDataBase(id);
@@ -104,8 +114,9 @@ public class PostService {
 
 		return new PostResponseDTO(post);
 	}
-	//This method allows the user to delete a post
-	public String delete(Long id, Principal  principal) {
+
+	// This method allows the user to delete a post
+	public String delete(Long id, Principal principal) {
 
 		Post post = returnPostDataBase(id);
 
@@ -125,13 +136,13 @@ public class PostService {
 
 		return "Post: " + id + " deleted!";
 	}
-	//This method allows the user to comment a post
+
+	// This method allows the user to comment a post
 	public PostResponseDTO commentingPost(Long id, CommentRequestDTO commentDTO, Principal principal) {
 
 		Post post = returnPostDataBase(id);
 
 		Comment comment = new Comment();
-		
 
 		comment.setCommentMessage(commentDTO.getMessage());
 		comment.setPost(post);
@@ -153,82 +164,64 @@ public class PostService {
 
 		return new PostResponseDTO(post);
 	}
-	
+
 	// This method inserts and removes likes
-	 public String likesClick(Long postId, Principal principal) {
-		 
-		 Optional<Post> postDb = postRepo.findById(postId);//this method transverse the post by id
-		 postDb.orElseThrow( () -> new ResourceNotFoundException("Post not found!"));
-		 Post currentPost = postDb.get();
-		 User user = returnUser(principal.getName());
-		
-		//This code verifies posts with user likes 
-		List<LikesPostUser> listLike = currentPost.getLikesUsers()
-		 	.stream()
-		 	.filter((obj) -> obj.getUser().equals(user))
-		 	.collect(Collectors.toList());
-		
-		if(listLike.size() > 0) { // this code transverse, update and unlike the post
-			List<LikesPostUser> updateList = currentPost.getLikesUsers()
-				 	.stream()
-				 	.filter((obj) -> !obj.getUser().equals(user))
-				 	.collect(Collectors.toList());
+	public String likesClick(Long postId, Principal principal) {
+
+		Optional<Post> postDb = postRepo.findById(postId);// this method transverse the post by id
+		postDb.orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
+		Post currentPost = postDb.get();
+		User user = returnUser(principal.getName());
+
+		// This code verifies posts with user likes
+		List<LikesPostUser> listLike = currentPost.getLikesUsers().stream().filter((obj) -> obj.getUser().equals(user))
+				.collect(Collectors.toList());
+
+		if (listLike.size() > 0) { // this code transverse, update and unlike the post
+			List<LikesPostUser> updateList = currentPost.getLikesUsers().stream()
+					.filter((obj) -> !obj.getUser().equals(user)).collect(Collectors.toList());
 			currentPost.setLikesUsers(updateList);
 			currentPost.setLikesQuantity(updateList.size());
 			postRepo.save(currentPost);
 			likesRepo.deleteById(listLike.get(0).getId());
-			
-		} else {  // this code adds likes
+
+		} else { // this code adds likes
 			LikesPostUser likeUser = likesRepo.save(new LikesPostUser(currentPost, user));
 			currentPost.addLikesUsers(likeUser);
-			currentPost.setLikesQuantity(currentPost.getLikesQuantity()+1);
+			currentPost.setLikesQuantity(currentPost.getLikesQuantity() + 1);
 			postRepo.save(currentPost);
 		}
-		 	 
-		 
+
 		return "Action Done!";
-		 
-	 }
-	 
-	//this method checks the filter parameters
-	 private List<Post> checkFilterParam(String seedPopularName) {
-	    	
-	    	List<Post> posts;
-				
-			if(seedPopularName == null) {
-				posts = returnAllPosts();
-				
-			} else {
-				
-				posts = returnPostFilterByPopularName(seedPopularName);
-				
-			}
-			
-			return posts;
-	    	
-	    }
-	    
-	//This methods returns all posts on the search
-		private List<Post> returnAllPosts() {
-			return postRepo.findAll();
-		}
-		
-		//This methods filter posts by popular name
-		private List<Post> returnPostFilterByPopularName(String seedPopularName) {
-			
+
+	}
+
+	// this method checks the filter parameters by popular name
+	private List<Post> checkFilterParam(String seedPopularName) {
+
+		List<Post> posts = returnPostFilterByPopularName(seedPopularName);
+
+		return posts;
+
+	}
+
+
+	// This methods filter posts by popular name
+	private List<Post> returnPostFilterByPopularName(String seedPopularName) {
+
 		List<Seed> seeds = seedRepo.findByPopularNameContains(seedPopularName);
-			
-         List<Post> posts = new ArrayList<>();
-			
-			for(Seed seed : seeds) {
-				Post post = seed.getPost();
-				if(post!=null) {
-					posts.add(post);
-				}
+
+		List<Post> posts = new ArrayList<>();
+
+		for (Seed seed : seeds) {
+			Post post = seed.getPost();
+			if (post != null) {
+				posts.add(post);
 			}
-			
-			return posts;
 		}
+
+		return posts;
+	}
 
 	private User returnUser(String email) {
 		return userRepo.findByEmail(email).get();
@@ -245,7 +238,7 @@ public class PostService {
 		return post;
 	}
 
-	//This method validates the email post owner 
+	// This method validates the email post owner
 	private void permissionValidation(String emailUserLogged, String ownerEmail, String msg) {
 
 		if (!emailUserLogged.equals(ownerEmail)) {
@@ -253,5 +246,5 @@ public class PostService {
 		}
 
 	}
-	
-	}
+
+}
