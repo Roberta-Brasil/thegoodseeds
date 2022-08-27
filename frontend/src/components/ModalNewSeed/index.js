@@ -17,6 +17,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { typeStorage } from '../../constants/typeStorage';
 import { url } from '../../services/url';
 import { SUPPORTED_FORMATS } from '../../constants/supportedFormatsImg';
+import { TailSpin } from "react-loader-spinner";
+
 
 const style = {
   position: 'absolute',
@@ -37,9 +39,13 @@ export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
   const [seedsOpen, setSeedsOpen] = useState(false);
   const [imgURL, setImgURL] = useState("");
   const [loadingUpload, setLoadingUpload] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
   
   
   const handleSendImageToFirebase = (file, data) => {
+
+    setLoadingScreen(true)
+
     if (!file) return;
 
     setLoadingUpload(true)
@@ -67,9 +73,12 @@ export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
         }).catch((error) => {
           alert(error)
           setLoadingUpload(false)
+    setLoadingScreen(false)
+
           
         }).finally(() => {
           setLoadingUpload(false)
+
         })
       }
     );
@@ -163,10 +172,16 @@ export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
           refreshSeeds()
           closeModal()
           reset()
+    setLoadingScreen(false)
+
+     alert('The seed was created with success!')
+
   
         }).catch ((error) => {
           console.log('error: catch da funcao tryCreateNewSeed ' +error)
           alert('error: catch da funcao tryCreateNewSeed ' +error)
+    setLoadingScreen(false)
+
         }) 
   
       }
@@ -182,6 +197,8 @@ export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
         console.log('error -----------')
         console.log(error)
         alert('ERROR!',error)
+    setLoadingScreen(false)
+
       }
       
     }
@@ -198,7 +215,14 @@ export function ModalNewSeed({ valueModal, closeModal ,refreshSeeds}) {
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Create new seed</TitleModal>
+
+
+            {!loadingScreen ?
             <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={() => close()} />
+
+            :<IoIosClose size={32} style={{ cursor: 'default' }} disabled={true} />
+            }
+
           </ContainerHeader>
 
           <ContainerBody>
@@ -338,7 +362,7 @@ name="dateOfCollection"
               </ContainerInput>
 
 <FooterForm>
-             { !loadingUpload ?
+             {/* { !loadingUpload ?
 
              <>
               <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />
@@ -348,7 +372,36 @@ name="dateOfCollection"
              :
 
              <TitleModal>Loading datas.</TitleModal>
-              }
+              } */}
+
+
+
+{ !loadingScreen && <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />}
+
+
+{
+            !loadingScreen
+              ?
+          
+          <Button Type='submit' cor='#1FAD66' altura={40} title='Save' />
+          
+          :
+
+          <div style={{  width:'100%', justifyContent:'flex-end', display:'flex', height:40, alignItems:'center', marginRight:16 }} >
+
+          <TailSpin
+            height="32"
+            width="32"
+            color="#4fa94d"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{ }}
+            wrapperClass=""
+            visible={true}
+          />
+          </div>
+
+            }
 
 </FooterForm>
 

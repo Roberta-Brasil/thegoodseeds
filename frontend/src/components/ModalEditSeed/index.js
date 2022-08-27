@@ -15,6 +15,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { typeStorage } from '../../constants/typeStorage';
 import { url } from '../../services/url';
 import { ContainerEditInput } from './styles';
+import { TailSpin } from "react-loader-spinner";
+
 
 const style = {
   position: 'absolute',
@@ -46,9 +48,11 @@ dateOfCollection,
   const [seedsOpen, setSeedsOpen] = useState(false);
   const [imgURL, setImgURL] = useState(seedImg);
   const [loadingUpload, setLoadingUpload] = useState(false);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
     const handleSendImageToFirebase = (file, data) => {
       setLoadingUpload(true)
+      setLoadingScreen(true)
       console.log(file)
       if (!file ) {
         tryEditNewSeed(data, file);
@@ -79,9 +83,11 @@ dateOfCollection,
   
           }).catch((error) => {
             alert(error)
+      setLoadingScreen(false)
             
           }).finally(() => {
             setLoadingUpload(false)
+
           })
         }
       );
@@ -166,6 +172,8 @@ dateOfCollection,
           refreshSeeds()
           closeModal()
           setLoadingUpload(false)
+      setLoadingScreen(false)
+
 
           reset()
      alert('The seed was updated succssefully!')
@@ -173,6 +181,8 @@ dateOfCollection,
   
         }).catch((error) => {
           alert(error)
+      setLoadingScreen(false)
+
           
         }).finally(() => {
           setLoadingUpload(false)
@@ -187,6 +197,8 @@ dateOfCollection,
 
       } catch (error) {
         alert('ERROR!',error)
+    setLoadingScreen(false)
+
       }
       
     }
@@ -229,7 +241,14 @@ dateOfCollection,
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Edit seed XPTO</TitleModal>
+
+
+            
+            {!loadingScreen ?
             <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={() => close()} />
+
+            :<IoIosClose size={32} style={{ cursor: 'default' }} disabled={true} />
+            }
           </ContainerHeader>
 
 
@@ -375,17 +394,34 @@ name="dateOfCollection"
 
 <FooterForm>
 
-              { !loadingUpload ?
 
-<>
- <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />
- <Button Type='submit' cor='#1FAD66' altura={40} title='Update' />
-</>
+{ !loadingScreen && <Button onClick={() => close()} cor='#EB5353' altura={40} title='Cancel' />}
 
-:
 
-<TitleModal>Loading datas...</TitleModal>
- }
+ 
+{
+            !loadingScreen
+              ?
+          
+              <Button Type='submit' cor='#1FAD66' altura={40} title='Update' />
+          
+          :
+
+          <div style={{  width:'100%', justifyContent:'flex-end', display:'flex', height:40, alignItems:'center', marginRight:16 }} >
+
+          <TailSpin
+            height="32"
+            width="32"
+            color="#4fa94d"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{ }}
+            wrapperClass=""
+            visible={true}
+          />
+          </div>
+
+            }
 
 </FooterForm>
 

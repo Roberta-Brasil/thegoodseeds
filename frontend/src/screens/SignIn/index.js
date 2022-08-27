@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Button from "../../components/ButtonLogin";
 import * as C from "./styles";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,11 +11,15 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import {useForm} from 'react-hook-form'
 import logo from '../../assets/logo.jpeg';
 import { url } from "../../services/url";
+import { TailSpin } from "react-loader-spinner";
 
 
 export const SignIn = () => {
   const {  setToken , setUser} = useAuth();
   const navigate = useNavigate();
+
+  const [loadingScreen, setLoadingScreen] = useState(false);
+
 
 
   const loginUserFormSchema = Yup.object().shape({
@@ -54,9 +58,10 @@ export const SignIn = () => {
         const token = res.data.token
         passTokenToTryGetDatasProfile(token)
     
-      }).catch ((error) => {
-        console.log('error: catch da funcao sendEmailPasswordLoginToApi ' +error)
-        alert('error: catch da funcao sendEmailPasswordLoginToApi ' +error)
+      }).catch ((data) => {
+        console.log(data.response.data.error)
+        alert(data.response.data.error)
+        // alert(data.error)
       }) 
     }
 
@@ -87,10 +92,15 @@ export const SignIn = () => {
 
         navigate("/dashboard");
         alert("The login was successfully!")
+        setLoadingScreen(false)
 
       }).catch ((error)=>  {
-        alert('ERROR!',error)
+        alert('ERROR LOGIN!',error)
         console.log('ERROR!',error)
+        setLoadingScreen(false)
+
+
+      }).finally(() => {
       })
 
     }
@@ -120,6 +130,8 @@ export const SignIn = () => {
 
     } catch (error) {
       console.log(error)
+    setLoadingScreen(false)
+
       alert('ERROR!',error)
     }
 
@@ -159,21 +171,56 @@ export const SignIn = () => {
 
 
         <div style={{ padding:12, width:'100%'}} >
-        <Button Text="Entrar" Type="submit"   />
+{
+
+  loadingScreen
+  ?
+
+  <div style={{  width:'100%', justifyContent:'center', display:'flex',  }} >
+
+  <TailSpin
+    height="32"
+    width="32"
+    color="#4fa94d"
+    ariaLabel="tail-spin-loading"
+    radius="1"
+    wrapperStyle={{ }}
+    wrapperClass=""
+    visible={true}
+  />
+  </div>
+
+
+  :
+
+        <Button Text="Log in" Type="submit"   />
+        }
         </div>
 
         <C.LabelSignup>
-          Não tem uma conta?
+         Do you have an account?
           <C.Strong>
-            <Link to="/sign-up">&nbsp;Registre-se</Link>
+
+          { !loadingScreen 
+          ?
+           <Link aria-disabled={loadingScreen} to="/sign-up">&nbsp;Register</Link>
+:
+           <Link  onClick={ (event) => event.preventDefault() } style={{ cursor:'default' , }}  aria-disabled={loadingScreen} to="/sign-up">&nbsp;Register</Link>
+}
+          
           </C.Strong>
 
         </C.LabelSignup>
 
         <C.LabelSignup>
-          Esqueceu sua
+          Forget your
           <C.Strong>
-            <Link to="/password">&nbsp;Senha?</Link>
+
+          { !loadingScreen 
+          ?  <Link  to="/password">&nbsp;Password?</Link>
+
+          :  <Link onClick={ (event) => event.preventDefault() } style={{ cursor:'default' , }} to="/password">&nbsp;Senha?</Link>
+          }
           </C.Strong>
 
         </C.LabelSignup>

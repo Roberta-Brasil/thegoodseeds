@@ -11,6 +11,8 @@ import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import useAuth from "../../hooks/useAuth";
 import { url } from '../../services/url';
+import { TailSpin } from "react-loader-spinner";
+
 
 const style = {
   position: 'absolute',
@@ -30,6 +32,7 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
 
   const [filterSeeds, setFilterSeeds] = useState([]);
   const [mySeedsPost, setMySeedsPost] = useState([{}]);
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
 
   const formSchema = Yup.object().shape({
@@ -81,6 +84,8 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
     }
 
      async function tryCreateNewPost(data) {
+    setLoadingScreen(true)
+
       const {
 
         title,
@@ -107,10 +112,17 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
 
           refreshPosts()
           closeModalMethod()
+    setLoadingScreen(false)
+
+     alert('The post was created with success!')
+
+
   
         }).catch ((error) => {
+          setLoadingScreen(false)
           console.log('error: catch da funcao tryCreateNewPost ' +error)
           alert('error: catch da funcao tryCreateNewPost ' +error)
+
         }) 
   
       }
@@ -118,12 +130,15 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
 
   const submitForm = async (data) => {
     try {
+
       await tryCreateNewPost(data);
 
     } catch (error) {
       console.log('error -----------')
       console.log(error)
       alert('ERROR!',error)
+    setLoadingScreen(false)
+
     }
     
   }
@@ -137,10 +152,8 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
 
 
     useEffect(() => {
-      if(valueModal ==true){
         tryGetMySeeds()
-      }
-    }, [valueModal == true])
+    }, [])
     
 
   return (
@@ -154,7 +167,14 @@ export function ModalNewPost({ valueModal, closeModal, refreshPosts }) {
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Create new post</TitleModal>
+
+
+            {!loadingScreen ?
             <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={closeModalMethod} />
+
+            :<IoIosClose size={32} style={{ cursor: 'default' }} disabled={true} />
+            }
+
           </ContainerHeader>
 
 
@@ -214,8 +234,37 @@ pattern="[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ,.
               </ContainerInput>
 
               <FooterForm>
-              <Button onClick={closeModalMethod} cor='#EB5353' altura={40} title='Cancel' />
+             { !loadingScreen &&  <Button onClick={closeModalMethod} cor='#EB5353' altura={40} title='Cancel' />}
+
+
+
+                   {
+            !loadingScreen
+              ?
+          
               <Button Type='submit' cor='#1FAD66' altura={40} title='Save' />
+
+          
+          :
+
+          <div style={{  width:'100%', justifyContent:'flex-end', display:'flex', height:40, alignItems:'center', marginRight:16 }} >
+
+          <TailSpin
+            height="32"
+            width="32"
+            color="#4fa94d"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{ }}
+            wrapperClass=""
+            visible={true}
+          />
+          </div>
+
+            }
+
+              
+            
         
           </FooterForm>
 

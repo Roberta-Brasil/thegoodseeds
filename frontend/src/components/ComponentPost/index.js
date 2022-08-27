@@ -23,7 +23,7 @@ export function ComponentPost({
   const [seedSwaped, setSeedSwaped] = useState(false);
   const [onlyRating, setOnlyRating] = useState(false);
   const [dropDownComments, setDropDownComments] = useState(false);
-  const [writeNewComment, setWriteNewComment] = useState(null);
+  const [writeNewComment, setWriteNewComment] = useState("");
   
   const favoriteItem = () => {
     tryLikePosts()
@@ -170,9 +170,9 @@ export function ComponentPost({
 
   {
     comments &&
-    comments.map((data)=> 
+    comments.map((data,index)=> 
 
-      <Comment data={data}/>
+      <Comment  key={index} data={data}/>
     )
 
   }

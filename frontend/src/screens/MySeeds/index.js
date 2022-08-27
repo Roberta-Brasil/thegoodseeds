@@ -61,11 +61,11 @@ useEffect(  ()  =>  {
 
     {
       mySeedsPost &&
-        mySeedsPost?.map((data) => 
+        mySeedsPost?.map((data, index) => 
           <ComponentMySeeds
           id={data.id}
           initializeTryGetMySeeds={() => initializeTryGetMySeeds()}
-          key={data.id}
+          key={index}
           popularName={data.popularName}
           familyName={data.familyName}
           scientificName={data.scientificName}

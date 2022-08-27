@@ -8,12 +8,18 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import logo from '../../assets/logo.jpeg';
 import axios from 'axios';
 import { url } from "../../services/url";
+import { TailSpin } from "react-loader-spinner";
 
 export const SignUp = () => {
   const navigate = useNavigate();
   const [errorGlobal, setErrorGlobal] = useState("");
+  const [loadingScreen, setLoadingScreen] = useState(false);
+
+  
 
   async function tryRegisterUser(data) {
+
+    setLoadingScreen(true)
 
     const {
       userName,
@@ -36,9 +42,15 @@ export const SignUp = () => {
         console.log(res)
         alert("The account was successfully registered!")
         navigate("/")
+        setLoadingScreen(false)
+        
 
       }).catch((error) => {
         console.log(error)
+        alert('ERROR REGISTER!',error)
+        setLoadingScreen(false)
+
+      }).finally(() => {
       })
       
      
@@ -72,6 +84,8 @@ const submitForm = async (data) => {
 
   } catch (error) {
     console.log(error)
+    setLoadingScreen(false)
+
     alert('ERROR!',error)
   }
 
@@ -122,15 +136,39 @@ name='email'
 
 <span>{errorGlobal}</span>
 <div style={{ padding:12, width:'100%'}} >
+
+  {
+    loadingScreen 
+    ?
+    <div style={{  width:'100%', justifyContent:'center', display:'flex',  }} >
+
+    <TailSpin
+      height="32"
+      width="32"
+      color="#4fa94d"
+      ariaLabel="tail-spin-loading"
+      radius="1"
+      wrapperStyle={{ }}
+      wrapperClass=""
+      visible={true}
+    />
+    </div>
+  :
 <Button Text="Register" Type="submit"   />
+  }
 
 </div>
 
 
 <C.LabelSignup>
-Já tem uma conta?
+  Already have an account?
   <C.Strong>
-    <Link to="/">&nbsp;Entre</Link>
+{
+  !loadingScreen
+
+  ? <Link to="/">&nbsp;Sign in</Link>
+  :  <Link   onClick={ (event) => event.preventDefault() } style={{ cursor:'default' , }}   to="/">&nbsp;Log in</Link>
+    }
   </C.Strong>
 
 </C.LabelSignup>

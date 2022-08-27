@@ -73,6 +73,12 @@ export function Dashboard() {
 
       await newApi.get(`/posts?seedPopularName=${searchBar}`)
       .then((data) => {
+
+           if(!data?.data[0]){
+          alert("seed not found")
+          return
+        }
+        
         console.log(data.data)
        setPostsDashboard(data.data)
 
@@ -127,10 +133,10 @@ export function Dashboard() {
 
       {
         postsDashboard &&
-        postsDashboard?.map((data) => 
+        postsDashboard?.map((data, index) => 
           <ComponentPost
           refreshPosts={() => initializeTryGetAllPosts()} 
-          key={data.postId}
+          key={index}
           data={data}
          
            />

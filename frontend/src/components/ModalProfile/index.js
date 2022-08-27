@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { url } from '../../services/url';
 import axios from 'axios';
 import { Box, Modal } from '@mui/material';
+import { TailSpin } from "react-loader-spinner";
 
 
 const style = {
@@ -32,6 +33,7 @@ export function ModalProfile({ valueModal, closeModal,  profileImg }) {
   const [imgURL, setImgURL] = useState("");
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [handleFile, setHandleFile] = useState(null);
+  const [loadingScreen, setLoadingScreen] = useState(false);
   
 
   const { token } = useAuth();
@@ -78,14 +80,22 @@ const handleClick = event => {
     .then((res) => 
     {
       setUser(res.data)
+     alert('The profile was updated with success!')
+    setLoadingScreen(false)
+
+
 
     }).catch ((error)=>  {
       alert('ERROR!',error)
+    setLoadingScreen(false)
+
     })
 
   }
 
   async function tryEditProfile(data, downloadURL) {
+
+
 
     const newApi = axios.create({
       baseURL: url,
@@ -111,9 +121,13 @@ const handleClick = event => {
         setLoadingUpload(false)
         getDatasProfileFromApi()
 
+
       }).catch ((error) => {
         console.log('error: catch da funcao tryEditProfile ' +error)
         alert('error: catch da funcao tryEditProfile ' +error)
+    setLoadingScreen(false)
+    
+
       }) 
 
     }
@@ -149,9 +163,12 @@ const handleClick = event => {
 
         }).catch((error) => {
           alert(error)
+    setLoadingScreen(false)
+
           
         }).finally(() => {
           setLoadingUpload(false)
+
         })
       }
     );
@@ -160,10 +177,14 @@ const handleClick = event => {
 
   const submitForm = async  (data) => {
     try {
+    setLoadingScreen(true)
+
     handleSendImageToFirebase(handleFile, data)
 
     } catch (error) {
       alert('ERROR!',error)
+    setLoadingScreen(false)
+
     }
     
   }
@@ -199,14 +220,44 @@ const handleClick = event => {
           <ContainerHeader>
             <div style={{ width: 32 }} />
             <TitleModal>Your Profile</TitleModal>
+
+            {!loadingScreen ?
             <IoIosClose size={32} style={{ cursor: 'pointer' }} onClick={closeModal} />
+
+            :<IoIosClose size={32} style={{ cursor: 'default' }} disabled={true} />}
           </ContainerHeader>
+
+
+          {
+            !loadingScreen
+
+            ?
 
           <AvatarProfile
           onClick={handleClick}
     src={user?.profileImg}
-          
           />
+        
+        :
+
+        <div style={{  width:'100%', display:'flex', marginLeft:16, height:80,width:80, alignItems:'center' }} >
+
+        <TailSpin
+          height="32"
+          width="32"
+          color="#4fa94d"
+          ariaLabel="tail-spin-loading"
+          radius="1"
+          wrapperStyle={{ }}
+          wrapperClass=""
+          visible={true}
+        />
+        </div>
+        
+        
+        }
+
+
 
       <input
         type="file"
@@ -247,7 +298,7 @@ const handleClick = event => {
 
 
               <ContainerInput>
-          <label htmlFor="descricao">FUll Name</label>
+          <label htmlFor="descricao">Full Name</label>
 <input
                       id="fullName"
                       type="text"
@@ -270,9 +321,34 @@ const handleClick = event => {
 
           <FooterForm>
 
-          <Button onClick={logout} cor='#EB5353' altura={40} title='Logout' />
-            
+          { !loadingScreen && <Button onClick={logout} cor='#EB5353' altura={40} title='Logout' />}
+
+
+            {
+            !loadingScreen
+              ?
+          
           <Button Type="submit"  cor='#1FAD66' altura={40} title='Update' />
+          
+          :
+
+          <div style={{  width:'100%', justifyContent:'flex-end', display:'flex', height:40, alignItems:'center', marginRight:16 }} >
+
+          <TailSpin
+            height="32"
+            width="32"
+            color="#4fa94d"
+            ariaLabel="tail-spin-loading"
+            radius="1"
+            wrapperStyle={{ }}
+            wrapperClass=""
+            visible={true}
+          />
+          </div>
+
+            }
+          
+          
           </FooterForm>
           </form>
 
