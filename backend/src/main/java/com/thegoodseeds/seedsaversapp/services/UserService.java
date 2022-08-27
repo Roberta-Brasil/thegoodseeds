@@ -1,8 +1,10 @@
 package com.thegoodseeds.seedsaversapp.services;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +59,13 @@ public class UserService implements UserDetailsService {
 	public List<SeedResponseDTO> findAllSeedsByUser(Principal principal) {
 
 		User user = returnUser(principal.getName());
-
-		List<Seed> seeds = user.getSeeds();
+		Set<Seed> seeds = new HashSet<>();
+		for (Seed obj : user.getSeeds()) {
+			seeds.add(obj);
+		}
 
 		List<SeedResponseDTO> seedsDTO = seeds.stream().map(SeedResponseDTO::new).collect(Collectors.toList());
-
+		
 		return seedsDTO;
 	}
 
